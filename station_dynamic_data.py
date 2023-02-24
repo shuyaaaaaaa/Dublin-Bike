@@ -48,11 +48,9 @@ while True:
                     # Rollback any changes made to database if there was an error
                     conn.rollback() 
 
-                # Finally block: code that is always executed, regardless of whether an exception was raised or not
-                finally:
-                    # Close the connection
-                    cursor.close()
-                    conn.close()        
+            # Close the connection
+            cursor.close()
+            conn.close()        
         else:
             print("Error: API request failed with status code", r.status_code)
 
