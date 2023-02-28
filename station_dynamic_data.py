@@ -1,11 +1,10 @@
 # Script for scrapping dynamic bike data from JCD
 # Need to add Open Weather scrapper to this file
+import send_email
 import login
 import pymysql
 import requests
 import time
-
-# Add while loop
 
 while True:
     try:
@@ -40,22 +39,25 @@ while True:
                     cursor.execute(sql_dynamic, dynamic_values)
                     conn.commit()
 
-                    # Confirm rows added successfully
-                    print("Rows inserted successfully!")
-
                 except Exception as e:
                     print(f"Database error: {e}")
                     # Rollback any changes made to database if there was an error
                     conn.rollback() 
+                    send_email.email_error(e)
+            
+            # Confirm rows added successfully
+            print("Rows inserted successfully!")
 
             # Close the connection
             cursor.close()
             conn.close()        
         else:
             print("Error: API request failed with status code", r.status_code)
+            send_email.email_error(r.status_code)
 
     except pymysql.Error as e:
         print("Error connecting to database:", e)
+        send_email.email_error(e)
 
     # Add 5 minute repeat.
     time.sleep(300)
