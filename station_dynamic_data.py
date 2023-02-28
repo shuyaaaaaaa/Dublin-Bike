@@ -1,15 +1,10 @@
 # Script for scrapping dynamic bike data from JCD
-# Need to add Open Weather scrapper to this file
 import send_email
 import login
 import pymysql
 import requests
 import time
-import logging
 from datetime import datetime
-
-logging.basicConfig(filename='station_dynamic.log', level=logging.INFO,
-                    format='%(asctime)s %(message)s')
 
 while True:
     try:
@@ -52,13 +47,10 @@ while True:
                     break
             
             # Confirm rows added successfully & log
-            print("Rows inserted successfully!")
             now = datetime.now()
             current_time = now.strftime("%H:%M:%S")
-            current_date = now.strftime("%Y-%m-%d")
-
-            # log the time, date, and confirmation message
-            logging.info(f"Station data scraped on {current_date} at {current_time}")
+            current_date = now.strftime("%d-%m-%Y")
+            print(f"Rows inserted successfully on {current_date} at {current_time}")
 
             # Close the connection
             cursor.close()
