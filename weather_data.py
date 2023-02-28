@@ -84,6 +84,7 @@ while True:
                 send_email.email_error(e)
                 # Rollback any changes made to database if there was an error
                 conn.rollback() 
+                break
 
             # Confirm rows added successfully & log
             print("Rows inserted successfully!")

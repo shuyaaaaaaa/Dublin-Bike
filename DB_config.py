@@ -34,6 +34,8 @@ except Exception as e:
 ##dynamic table=what will change over time-this will be updated every 5 minutes
 sql="""
 CREATE TABLE IF NOT EXISTS dynamic ( 
+number INTEGER,
+name VARCHAR(256),
 bike_stands INTEGER,
 available_bike_stands INTEGER,
 available_bikes INTEGER,
