@@ -3,6 +3,7 @@ import login
 import pymysql
 import requests
 import time
+import send_email
 
 # Add while loop
 
@@ -79,6 +80,7 @@ while True:
 
             except Exception as e:
                 print(f"Database error: {e}")
+                send_email.email_error(e)
                 # Rollback any changes made to database if there was an error
                 conn.rollback() 
 
@@ -87,9 +89,11 @@ while True:
             conn.close()        
         else:
             print("Error: API request failed with status code", r.status_code)
+            send_email.email_error(r.status_code)
 
     except pymysql.Error as e:
         print("Error connecting to database:", e)
+        send_email.email_error(e)
 
     # Add 5 minute repeat.
     time.sleep(300)
