@@ -57,7 +57,7 @@ while True:
             current_date = now.strftime("%Y-%m-%d")
 
             # log the time, date, and confirmation message
-            logging.info(f"Weather data scraped on {current_date} at {current_time}")
+            logging.info(f"Station data scraped on {current_date} at {current_time}")
 
             # Close the connection
             cursor.close()
