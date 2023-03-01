@@ -52,14 +52,14 @@ while True:
             current_time = now.strftime("%H:%M:%S")
             current_date = now.strftime("%d-%m-%Y")
             print(f"Rows inserted successfully on {current_date} at {current_time}")
-
-            # Close the connection
-            cursor.close()
-            conn.close()        
+        
         else:
             print("Error: API request failed with status code", r.status_code)
             send_email.email_error(r.status_code)
 
+        # Close the connection
+        cursor.close()
+        conn.close()
     except pymysql.Error as e:
         print("Error connecting to database:", e)
         send_email.email_error(e)
