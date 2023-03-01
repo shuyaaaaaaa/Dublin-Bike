@@ -1,4 +1,4 @@
-# Script for scrapping dynamic bike data from JCD
+# Script for scrapping dynamic bike data from JCDecaux API
 import send_email
 import login
 import pymysql
@@ -42,6 +42,7 @@ while True:
                 except Exception as e:
                     print(f"Database error: {e}")
                     # Rollback any changes made to database if there was an error
+                    #and send an email to log the error
                     conn.rollback() 
                     send_email.email_error(e)
                     break

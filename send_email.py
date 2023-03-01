@@ -6,7 +6,7 @@ def email_error(error):
     smtp_port = 587
     username = 'dagg.george@gmail.com'
     password = 'zhxtastjtfrbmbwq'
-
+    #try connect to smtp server and login
     try:
         smtp_conn = smtplib.SMTP(smtp_server, smtp_port)
         smtp_conn.starttls()
