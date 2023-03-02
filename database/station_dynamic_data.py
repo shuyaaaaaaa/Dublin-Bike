@@ -1,6 +1,6 @@
 # Script for scrapping dynamic bike data from JCDecaux API
-import send_email
-import login
+import database.send_email as send_email
+import database.login as login
 import pymysql
 import requests
 import time

@@ -1,6 +1,6 @@
 # Script for making changes to the database
 #Purpose is to give us an idea of layout for how to make changes to the database
-import login
+import database.login as login
 import pymysql
 
 try:
