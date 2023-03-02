@@ -1,16 +1,12 @@
-
+import login
 import pymysql
 
-host='comp30830.cfgxtnlmswbs.eu-west-1.rds.amazonaws.com'
-user='admin'
-password='softwarebikes1'
-database='dublinbikes'
-
-conn = pymysql.connect(host=host, user=user, password=password, database=database)
-
+#creating connection using pymysql
+conn = pymysql.connect(host=login.dbHost, user=login.dbUser, password=login.dbPassword, database=login.dbDatabase)
 cursor = conn.cursor()
 
-#static-once this table is created and filled once it will only need to be updated less often
+#static table creation
+#This table will not change over time
 sql ='''
 CREATE TABLE IF NOT EXISTS static ( 
 number INTEGER,
@@ -26,12 +22,13 @@ bonus BOOLEAN
 try:
     res=cursor.execute("DROP TABLE IF EXISTS station")
     res=cursor.execute(sql)
+    #result will be zero if table is created
     print (res)
 except Exception as e:
     print(e)
 
-
-##dynamic table=what will change over time-this will be updated every 5 minutes
+#dynamic table creation
+#what will change over time-this will be updated every 5 minutes to collect data
 sql="""
 CREATE TABLE IF NOT EXISTS dynamic ( 
 number INTEGER,
@@ -45,11 +42,12 @@ last_update INTEGER
 """
 try:
     res=cursor.execute(sql)
+    #result will be zero if table is created
     print (res)
 except Exception as e:
-    print(e) #, traceback.format_exc())
+    print(e)
 
-
+#creating weather data table
 sql="""
 CREATE TABLE IF NOT EXISTS weather ( 
 latitude REAL,
@@ -79,11 +77,10 @@ time_w INTEGER
 """
 try:
     res=cursor.execute(sql)
+    #print 0 if table is created
     print (res)
 except Exception as e:
-    print(e) #, traceback.format_exc())
-
-
+    print(e)
 
 cursor.close()
-cursor.close()
+conn.close()

@@ -1,7 +1,8 @@
-# Script for scrapping static bike data from JCD (intended to only be used once)
+# Script for scrapping static bike data from JCDecaux (intended to only be used once)
 import login
 import pymysql
 import requests
+import send_email
 
 try:
     # Connect to database
@@ -40,16 +41,19 @@ try:
                 print(f"Database error: {e}")
                 # Rollback any changes made to database if there was an error
                 conn.rollback() 
+                send_email.email_error(e)
         
         # Confirm rows added successfully
         print("Rows inserted successfully!")
-
-        # Close the connection
-        cursor.close()
-        conn.close()        
+     
     else:
         print("Error: API request failed with status code", r.status_code)
 
+    # Close the connection
+    cursor.close()
+    conn.close()
+        
 except pymysql.Error as e:
     print("Error connecting to database:", e)
+    send_email.email_error(e)
 

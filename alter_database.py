@@ -1,4 +1,5 @@
 # Script for making changes to the database
+#Purpose is to give us an idea of layout for how to make changes to the database
 import login
 import pymysql
 
@@ -8,7 +9,7 @@ try:
     cursor = conn.cursor()
     print("Connection to database successful!")
 
-    # SQL Statement
+    # EXAMPLE SQL Statement
     sql = 'INSERT INTO static(number, contract_name, name, address, position_lat, position_lng, banking, bonus) VALUES("42", "dublin", "SMITHFIELD NORTH", "Smithfield North", "53.349562", "-6.278198", "0", "0")'
     cursor.execute(sql)
     conn.commit()
