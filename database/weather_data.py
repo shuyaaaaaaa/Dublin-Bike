@@ -1,9 +1,9 @@
 # Script for scrapping dynamic weather data from openWeatherMap API
-import database.login as login
+import login
 import pymysql
 import requests
 import time
-import database.send_email as send_email
+import send_email
 from datetime import datetime
 
 while True:

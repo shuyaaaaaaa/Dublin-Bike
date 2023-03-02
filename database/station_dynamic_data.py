@@ -1,6 +1,6 @@
 # Script for scrapping dynamic bike data from JCDecaux API
-import database.send_email as send_email
-import database.login as login
+import send_email
+import login
 import pymysql
 import requests
 import time
@@ -21,10 +21,8 @@ while True:
             # If connection successful:
             print('Connection to JCDecaux successful!')
             data = r.json()
-
-            now = datetime.now()
-            current_time = now.strftime("%H:%M:%S")
-            current_date = now.strftime("%d-%m-%Y")
+            last_update=time.time()
+            
             # For each station, extract the following data points:
             for station in data:
                 number = station.get('number')
@@ -33,12 +31,12 @@ while True:
                 available_bike_stands = station.get('available_bike_stands')
                 available_bikes = station.get('available_bikes')
                 status = station.get('status')
-                last_update = station.get('lastUpdate')
+                
 
                 # Try insert this data into the static table.
                 try:
-                    sql_dynamic = 'INSERT INTO dynamic(number, name, bike_stands, available_bike_stands, available_bikes, status, last_update,current_date,current_time) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s);'
-                    dynamic_values = (number, name, station_capacity, available_bike_stands, available_bikes, status, last_update,current_date,current_time)
+                    sql_dynamic = 'INSERT INTO dynamic(number, name, bike_stands, available_bike_stands, available_bikes, status, last_update) VALUES(%s,%s,%s,%s,%s,%s,%s);'
+                    dynamic_values = (number, name, station_capacity, available_bike_stands, available_bikes, status, last_update)
                     cursor.execute(sql_dynamic, dynamic_values)
                     conn.commit()
 
@@ -51,7 +49,9 @@ while True:
                     break
             
             # Confirm rows added successfully & log
-            
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            current_date = now.strftime("%d-%m-%Y")
             print(f"Rows inserted successfully on {current_date} at {current_time}")
         
         else:
