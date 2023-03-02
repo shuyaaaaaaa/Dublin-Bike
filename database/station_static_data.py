@@ -1,8 +1,8 @@
 # Script for scrapping static bike data from JCDecaux (intended to only be used once)
-import database.login as login
+import login
 import pymysql
 import requests
-import database.send_email as send_email
+import send_email
 
 try:
     # Connect to database

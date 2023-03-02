@@ -1,6 +1,6 @@
 # Script for scrapping dynamic bike data from JCDecaux API
-import database.send_email as send_email
-import database.login as login
+import send_email
+import login
 import pymysql
 import requests
 import time
@@ -21,7 +21,8 @@ while True:
             # If connection successful:
             print('Connection to JCDecaux successful!')
             data = r.json()
-
+            last_update=time.time()
+            
             # For each station, extract the following data points:
             for station in data:
                 number = station.get('number')
@@ -30,7 +31,7 @@ while True:
                 available_bike_stands = station.get('available_bike_stands')
                 available_bikes = station.get('available_bikes')
                 status = station.get('status')
-                last_update = station.get('last_update')
+                
 
                 # Try insert this data into the static table.
                 try:

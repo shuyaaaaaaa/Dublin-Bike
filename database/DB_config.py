@@ -1,4 +1,4 @@
-import database.login as login
+import login
 import pymysql
 
 #creating connection using pymysql
