@@ -37,7 +37,8 @@ bike_stands INTEGER,
 available_bike_stands INTEGER,
 available_bikes INTEGER,
 status VARCHAR(256),
-last_update INTEGER
+s_date DATE,
+s_time TIME
 )
 """
 try:
@@ -72,7 +73,8 @@ snow_3 REAL,
 clouds REAL,
 sunrise INTEGER,
 sunset INTEGER,
-time_w INTEGER
+w_date DATE,
+w_time TIME
 )
 """
 try:
