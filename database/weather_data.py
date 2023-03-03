@@ -4,7 +4,7 @@ import pymysql
 import requests
 import time
 import send_email
-from datetime import datetime
+import datetime
 
 while True:
     try:
@@ -65,12 +65,16 @@ while True:
             sunrise=data.get('sys').get('sunrise')
             sunset=data.get('sys').get('sunset')
 
-            time_w=data.get('dt')
+            # Convert timestamp to readable date and time
+            timestamp = data.get('dt')
+            timestamp_obj = datetime.datetime.fromtimestamp(timestamp)
+            w_date = timestamp_obj.strftime('%Y-%m-%d')
+            w_time = timestamp_obj.strftime('%H:%M:%S')
 
             # Try insert this data into the weather table.
             try:
-                sql_weather = 'INSERT INTO weather(latitude,longitude,weather_id,weather_main ,weather_description,weather_icon,temperature,feels_like,temp_min,temp_max,pressure,humidity,visibility,wind_speed,wind_direction,rain_1,rain_3,snow_1,snow_3,clouds,sunrise,sunset,time_w) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
-                weather_values = (latitude,longitude,weather_id,weather_main ,weather_description,weather_icon,temperature,feels_like,temp_min,temp_max,pressure,humidity,visibility,wind_speed,wind_direction,rain_1,rain_3,snow_1,snow_3,clouds,sunrise,sunset,time_w)
+                sql_weather = 'INSERT INTO weather(latitude,longitude,weather_id,weather_main ,weather_description,weather_icon,temperature,feels_like,temp_min,temp_max,pressure,humidity,visibility,wind_speed,wind_direction,rain_1,rain_3,snow_1,snow_3,clouds,sunrise,sunset,w_date, w_time) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
+                weather_values = (latitude,longitude,weather_id,weather_main ,weather_description,weather_icon,temperature,feels_like,temp_min,temp_max,pressure,humidity,visibility,wind_speed,wind_direction,rain_1,rain_3,snow_1,snow_3,clouds,sunrise,sunset,w_date, w_time)
                 cursor.execute(sql_weather, weather_values)
                 conn.commit()
 
@@ -82,7 +86,7 @@ while True:
                 break
 
             # Confirm rows added successfully
-            now = datetime.now()
+            now = datetime.datetime.now()
             current_time = now.strftime("%H:%M:%S")
             current_date = now.strftime("%d-%m-%Y")
             print(f"Rows inserted successfully on {current_date} at {current_time}")
