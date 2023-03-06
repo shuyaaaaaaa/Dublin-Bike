@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<!--This will be the homepage of the website-->
+<head>
+    <title>Detailed Station</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Deatiled Station Information - Test</h1>
+    <form action="/" method="POST">
+        <label for="station_number">Enter station number:</label>
+        <input type="number" name="station_number" id="station_number" required>
+        <button type="submit">Submit</button>
+    </form>
+    {% if name %}
+    <ul>
+        <li>Station Number: {{number}}</li>
+        <li>Name: {{name}}</li>
+        <li>Capacity: {{capacity}}</li>
+        <li>Available Bikes: {{available_bikes}}</li>
+        <li>Available Stands: {{available_stands}}</li>
+        <li>Station Status: {{status}}</li>
+    </ul>
+    {% endif %}
+    {% if error %}
+    {{ error }}
+    {% endif %}
+</body>
