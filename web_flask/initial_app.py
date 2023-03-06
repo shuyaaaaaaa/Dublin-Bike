@@ -2,7 +2,6 @@ from flask import Flask, render_template, request
 import pymysql
 import login2
 import requests
-import json
 
 # Connect to JCD
 # Extract data
@@ -39,30 +38,35 @@ def index():
                         station_num = station.get('number')
                         if station_num == user_request:
                             number = station.get('number')
-                            name = station.get('name')
+                            name = station.get('address')
                             station_capacity = station.get('bike_stands')
                             available_bike_stands = station.get('available_bike_stands')
                             available_bikes = station.get('available_bikes')
                             status = station.get('status')
                             break
+                
+                text_response = f"""
+                    <h3 class='center'>{name} ({number})</h3>
+                    <ul>
+                        <li>Available Bikes: {available_bikes}</li>
+                        <li>Available Stands: {available_bike_stands}</li>
+                        <li>Capacity: {station_capacity}</li>
+                    </ul>
+                    <p class='center'>This station is: {status}</p>
+                    <button id="close-button">Close</button>
+                """
                     
-                    try:
-                        # Render the HTML page with the extracted data points
-                        return render_template('detailed.html', 
-                                            number = number, 
-                                            name = name, 
-                                            capacity = station_capacity, 
-                                            available_bikes = available_bikes, 
-                                            available_stands = available_bike_stands, 
-                                            status = status)
-                    except Exception as e:
-                        print('Error displaying web page. Error: ', e)
+                try:
+                    # Render the HTML page with the extracted data points
+                    return text_response
+                except Exception as e:
+                    print('Error displaying web page. Error: ', e)
 
-                # If the station does not exists, render the HTML page with an error message
-                else:
-                    error_message = 'This station does not exist.'
-                    return render_template('detailed.html',
-                                           error = error_message)
+            # If the station does not exists, render the HTML page with an error message
+            else:
+                error_message = 'This station does not exist.'
+                return render_template('detailed.html',
+                                        error = error_message)
 
         except pymysql.Error as e:
             print("Error connecting to database:", e)
