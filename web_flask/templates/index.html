@@ -1,27 +1,79 @@
 <!DOCTYPE html>
 <html>
-<!--This will be the homepage of the website-->
-<head>
+  <head>
     <title>Dublin Bikes</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
+  </head>
+  <body>
+    <h1>Dublin Bikes</h1>
+    <div id="map"></div>
+    <div id="detailed"></div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      // Shuya - Map function
+      var infowindow;
+      function initMap(){
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 53.3498, lng: -6.2603},
+            zoom: 14,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            language: 'en'
+          });
 
-<body>
-    <header>
-        <div class="wrap">
-            <nav>
-                <ul>
-                    <li>Home</li>
-                    <li>Map</li>
-                    <li><input type="text" placeholder="Search my website!"></li>
-                </ul>
-            </nav>
-            <h1>Map time</h1>
-        </div>
-    </header>
-    <section>
-        <div class="wrap">
-            <h3>Welcome to my website! This is the home page.</h3>
-        </div>
-    </section> 
-</body>
+        var data = {{ data | safe }};
+
+        for (var i = 0; i < data.length; i++){
+            var station = data[i];
+            var marker = new google.maps.Marker({
+              position: {lat: station[0], lng: station[1]},
+              map: map
+            });
+
+            var infowindow = new google.maps.InfoWindow({
+              content: '<h3>' + station[3] + station[2] + '</h3>'
+            });
+
+            marker.addListener('mouseover', (function(marker, infowindow){
+              return function() {
+                infowindow.open(map, marker);
+              }
+            })(marker, infowindow));
+
+            marker.addListener('mouseout', (function(marker, infowindow){ 
+                return function(){
+                  infowindow.close();
+                }
+              })(marker, infowindow));
+
+            marker.addListener('click', (function(marker, infowindow){
+              return function() {
+                // George - Extract station number from marker's info window
+                var infowindowContent = infowindow.getContent();
+                var station_num = infowindowContent.slice(4,6)
+
+                // George - Use AJAX to submit a POST request to server for associated server information
+                $.ajax({
+                    type: "POST",
+                    url: "/",
+                    data: { station_num },
+                    success: function(response) {
+                      $("#detailed").html(response); // update the detailed div with response
+                      $("#detailed").addClass('show'); // fade in the detailed div
+                    }
+                  });
+                }
+              })(marker, infowindow));            
+            }
+        }
+  
+      // George - Close detailed information display
+      $(document).on('click', '#close-button', function(){
+                $("#detailed").removeClass('show'); // remove the 'show' class to hide the detailed div
+            
+            });
+
+    </script>
+    <!-- Googlemap API --> 
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3NV_XtqrUxY3YWqZfs1W7pL8EMM4xeoY&language=en&callback=initMap"></script>
+  </body>
+</html>

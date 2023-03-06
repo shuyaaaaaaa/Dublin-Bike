@@ -1,28 +1,16 @@
-/*This is the CSS stylesheet which my website will use for the homepage */
-/*General styling eg headers, p etc*/
-#dark{
+body {
     background-color: black;
-    color:#ccc;
-    font-family: 'Times New Roman', Times, serif, sans-serif;
-}
-/*Headings*/
-h1{
-    text-align:center;
-    margin-top:10px;
-    margin-bottom:20px;
 }
 
-.wrap{
-    margin: 0 auto;
-    padding: 10px 5%;
-    width: 90%;
-}
-
-body{
-    background-color: #282525;
-    font-family: Arial, Helvetica, sans-serif;
+h1 {
     color: white;
+    text-align: center;
 }
+
+#map {
+    height: 700px;
+    width: 100%;
+  }
 
 #detailed {
     position: fixed;
