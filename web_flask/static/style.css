@@ -17,6 +17,7 @@ header{
     background-color: #144069;
     border: none;
     font-size: 25px;
+    cursor: pointer;
 }
 
 #route{

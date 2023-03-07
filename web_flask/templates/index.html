@@ -39,7 +39,7 @@
             });
 
             var infowindow = new google.maps.InfoWindow({
-              content: '<h3>' + station[3] + station[2] + '</h3>' +'<div id="hover"></div>'
+              content: '<h3>' + station[2] + '</h3>' +'<div id="hover"></div>' + '<input type="hidden" id="station_num" value="' + station[3] + '">'
 
               // add availability and occupancy
             });
@@ -47,9 +47,8 @@
             marker.addListener('mouseover', (function(marker, infowindow){
               return function() {
                 infowindow.open(map, marker);
-                var infowindowContent = infowindow.getContent();
-                var station_num = infowindowContent.slice(4,6)
-                console.log('Station to be found:', station_num)
+                var station_num = $('#station_num').val();
+                console.log('Station to be found:', station_num);
 
                 $.ajax({
                     type: "POST",
@@ -71,8 +70,7 @@
             marker.addListener('click', (function(marker, infowindow){
               return function() {
                 // George - Extract station number from marker's info window
-                var infowindowContent = infowindow.getContent();
-                var station_num = infowindowContent.slice(4,6);
+                var station_num = $('#station_num').val();
 
                 // George - Use AJAX to submit a POST request to server for associated server information
                 $.ajax({
