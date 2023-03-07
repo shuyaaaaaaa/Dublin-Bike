@@ -77,7 +77,7 @@
                 // George - Use AJAX to submit a POST request to server for associated server information
                 $.ajax({
                     type: "POST",
-                    url: "/",
+                    url: "/detailed",
                     data: { station_num },
                     success: function(response) {
                       $("#detailed").html(response); // update the detailed div with response

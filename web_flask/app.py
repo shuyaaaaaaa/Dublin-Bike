@@ -6,6 +6,7 @@ import requests
 
 app = Flask(__name__)
 
+# Map Route (Index)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # -------- Google Map View --------
@@ -20,6 +21,11 @@ def index():
     cursor.execute('SELECT position_lat, position_lng, name, number FROM static')
     data = cursor.fetchall()
 
+    return render_template('index.html', data=json.dumps(data))
+
+# Detailed Information Display
+@app.route('/detailed', methods=['GET', 'POST'])
+def detailed():
     # ------ Deatiled Station Information ------- 
 
     # If POST request submitted:
@@ -86,11 +92,8 @@ def index():
 
         except Exception as e:
             print("Connection error:", e)
-    
-    # Render the HTML page on load
-    else:
-        return render_template('index.html', data=json.dumps(data))
 
+# Live station data on hover
 @app.route('/hover', methods=['GET', 'POST'])
 def hover():
     # ------ Station Information - Marker Hover ------- 
