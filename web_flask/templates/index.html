@@ -5,9 +5,18 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-    <h1>Dublin Bikes</h1>
+    <header>
+      <div id="logo">
+        <h1>Dublin Bikes</h1>
+      </div>
+      <div id="search">
+        <button id='search_button'>&#128269;</button>
+      </div>
+    </header>
+    
     <div id="map"></div>
     <div id="detailed"></div>
+    <div id="route"></div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
       // Shuya - Map function
@@ -31,6 +40,8 @@
 
             var infowindow = new google.maps.InfoWindow({
               content: '<h3>' + station[3] + station[2] + '</h3>'
+
+              // add availability and occupancy
             });
 
             marker.addListener('mouseover', (function(marker, infowindow){
@@ -71,6 +82,11 @@
                 $("#detailed").removeClass('show'); // remove the 'show' class to hide the detailed div
             
             });
+      
+      $(document).on('click', '#search_button', function(){
+          $("#route").addClass('show'); // remove the 'show' class to hide the detailed div
+      
+      });
 
     </script>
     <!-- Googlemap API --> 

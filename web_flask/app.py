@@ -43,7 +43,8 @@ def index():
                     station_num = station.get('number')
                     if station_num == user_request:
                         number = station.get('number')
-                        name = station.get('address')
+                        name = station.get('name')
+                        address = station.get('address')
                         station_capacity = station.get('bike_stands')
                         available_bike_stands = station.get('available_bike_stands')
                         available_bikes = station.get('available_bikes')
@@ -52,14 +53,24 @@ def index():
                 
                 # Response HTML for POST request
                 text_response = f"""
-                    <h3 class='center'>{name} ({number})</h3>
-                    <ul>
-                        <li>Available Bikes: {available_bikes}</li>
-                        <li>Available Stands: {available_bike_stands}</li>
-                        <li>Capacity: {station_capacity}</li>
-                    </ul>
-                    <p class='center'>This station is: {status}</p>
-                    <button id="close-button">Close</button>
+                    <div id='detailed_info'>
+                        <button id='close-button' class="close-button">&times;</button>
+                        <h3 class=''>{name} ({number})</h3>
+                        <h4 class=''>{address}</h3>
+                        <div id='detailed_blocks'>
+                            <div id='available_bikes' class='info_block'>
+                                <p>Bikes:</p>
+                                <p>{available_bikes}</p>
+                            </div>
+                            <div id='available_stands' class='info_block'>
+                                <p>Stands:</p>
+                                <p>{available_bike_stands}</p>
+                            </div>
+                        </div>
+                        <div id='station_status'>
+                            <p class='block_green'>This station is: {status}</p>
+                        </div>
+                    </div>
                 """
                     
                 try:
