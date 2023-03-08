@@ -1,0 +1,109 @@
+body {
+    background-color: #144069;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#logo{
+    color: white;
+}
+
+#search_button{
+    background-color: #144069;
+    border: none;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+#route{
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: #f2f2f2;
+    transition: left 0.5s;
+    color:#282525;
+}
+
+#route.show{
+    left:0;
+}
+
+#map {
+    height: 85vh;
+    width: 100%;
+  }
+
+#detailed {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: #f2f2f2;
+    transition: left 0.5s;
+    color:#282525;
+}
+
+#detailed.show{
+    left: 0;
+}
+
+#detailed_info{
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 20px;
+    position: relative;
+    top: 35px;
+
+}
+
+#detailed_blocks{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+#available_stands{
+    text-align: center;
+}
+
+#available_bikes{
+    text-align: center;
+}
+
+#station_status{
+    text-align: center;
+}
+
+.block_green{
+    background-color: #197c1d;
+    color:#f2f2f2;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.info_block{
+    background-color: #144069;
+    width: 100%;
+    color:#f2f2f2;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 5px 3px 3px #6486a7;
+}
+
+button.close-button{
+    background-color: #144069;
+    border: none;
+    padding: 5px 7px 5px 7px;
+    border-radius: 5px;
+    color: #f2f2f2;
+    font-weight: bold;
+    float: right;
+    cursor: pointer;
+}
