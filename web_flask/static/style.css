@@ -105,8 +105,5 @@ button.close-button{
     color: #f2f2f2;
     font-weight: bold;
     float: right;
-}
-
-#close-button{
     cursor: pointer;
 }
