@@ -79,11 +79,11 @@ def detailed():
                         <h4 class=''>{address}</h3>
                         <div id='detailed_blocks'>
                             <div id='available_bikes' class='info_block'>
-                                <p>Bikes:</p>
+                                <p>Bikes Available:</p>
                                 <p>{available_bikes}</p>
                             </div>
                             <div id='available_stands' class='info_block'>
-                                <p>Stands:</p>
+                                <p>Empty Stands:</p>
                                 <p>{available_bike_stands}</p>
                             </div>
                         </div>
@@ -114,9 +114,7 @@ def route():
     if request.method == 'POST':
         # Get the start and end locations from the form
         start = request.form['start']
-        print(start)
         end = request.form['end']
-        print(end)
         # Get the latitude and longitude of the start and end locations
         #by using the Google Maps Geocoding API
         apiKey='AIzaSyANu9D6AUdAajvwdweM-tkgx6CX1J9NdvQ'

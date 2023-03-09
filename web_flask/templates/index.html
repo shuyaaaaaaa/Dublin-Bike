@@ -31,7 +31,7 @@
     <script>
       // Shuya - Map function
       var infowindow;
-
+      //initialise the map to  Dublin and load as a roadmap
       function initMap(){
         var map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 53.3498, lng: -6.2603},
@@ -53,15 +53,17 @@
 
             // Added dynamic station data on load instead of calling the API on every hover. Better performance.
             var infowindow = new google.maps.InfoWindow({
-              content: '<h3>' + station[2] + '</h3>' + '<p>Bikes: ' + dynamic_data.available_bikes + ' Stands: ' + dynamic_data.available_bike_stands + '</p>' + "<input style='display: none' value='" + station[3] + "' id='station_num'>"
+              content: '<h3>' + station[2] + '</h3>' + '<p>Bikes Available: ' + dynamic_data.available_bikes +
+                ' Empty Stands: ' + dynamic_data.available_bike_stands + '</p>' + "<input style='display: none' value='" +
+                 station[3] + "' id='station_num'>"
             });
-
+            //open the info window when we hover over the marker
             marker.addListener('mouseover', (function(marker, infowindow){
               return function() {
                 infowindow.open(map, marker);
               }
             })(marker, infowindow));
-
+            //close the infowindow when we move off the marker
             marker.addListener('mouseout', (function(marker, infowindow){ 
                 return function(){
                   infowindow.close();
@@ -94,9 +96,10 @@
         // Use AJAX to catch route form submission and then update the map with the response.
         $(document).ready(function(){
               $('#route_request').submit(function(event){
+                //prevent the form from submitting until the data is added
                 event.preventDefault();
                 var formData = {
-                  //adding dublin to the end of the address to ensure that the geocoder returns the correct location
+                  //adding ', Dublin' to the end of the input address to ensure that the geocoder returns the correct location
                   start: $('#start').val()+', Dublin',
                   end: $('#end').val()+', Dublin'
                 }
