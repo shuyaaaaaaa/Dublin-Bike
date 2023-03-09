@@ -114,7 +114,9 @@ def route():
     if request.method == 'POST':
         # Get the start and end locations from the form
         start = request.form['start']
+        print(start)
         end = request.form['end']
+        print(end)
         # Get the latitude and longitude of the start and end locations
         #by using the Google Maps Geocoding API
         apiKey='AIzaSyANu9D6AUdAajvwdweM-tkgx6CX1J9NdvQ'
