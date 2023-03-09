@@ -73,24 +73,25 @@ def detailed():
                 
                 # Response HTML for POST request
                 text_response = f"""
-                    <div id='detailed_info'>
                         <button id='close-button' class="close-button">&times;</button>
-                        <h3 class=''>{name} ({number})</h3>
-                        <h4 class=''>{address}</h3>
-                        <div id='detailed_blocks'>
-                            <div id='available_bikes' class='info_block'>
-                                <p>Bikes:</p>
-                                <p>{available_bikes}</p>
+                        <div id='detailed_info'>
+                            <h3 class=''>{name} ({number})</h3>
+                            <h4 class=''>{address}</h3>
+                            <div id='detailed_blocks'>
+                                <div id='available_bikes' class='info_block'>
+                                    <p>Bikes:</p>
+                                    <p>{available_bikes}</p>
+                                </div>
+                                <div id='available_stands' class='info_block'>
+                                    <p>Stands:</p>
+                                    <p>{available_bike_stands}</p>
+                                </div>
                             </div>
-                            <div id='available_stands' class='info_block'>
-                                <p>Stands:</p>
-                                <p>{available_bike_stands}</p>
+                            <div id='station_status'>
+                                <p class='block_green'>This station is: {status}</p>
                             </div>
                         </div>
-                        <div id='station_status'>
-                            <p class='block_green'>This station is: {status}</p>
-                        </div>
-                    </div>
+                        
                 """
                     
                 try:
