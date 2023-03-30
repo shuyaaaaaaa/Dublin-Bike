@@ -74,6 +74,7 @@ def detailed():
                 # Response HTML for POST request
                 text_response = f"""
                         <button id='close-button' class="close-button">&times;</button>
+
                         <div id='detailed_info'>
                             <h3 class=''>{name} ({number})</h3>
                             <h4 class=''>{address}</h3>
@@ -89,6 +90,7 @@ def detailed():
                             </div>
                             <div id='station_status'>
                                 <p class='block_green'>This station is: {status}</p>
+
                             </div>
                         </div>
                         
@@ -115,9 +117,7 @@ def route():
     if request.method == 'POST':
         # Get the start and end locations from the form
         start = request.form['start']
-        print(start)
         end = request.form['end']
-        print(end)
         # Get the latitude and longitude of the start and end locations
         #by using the Google Maps Geocoding API
         apiKey='AIzaSyANu9D6AUdAajvwdweM-tkgx6CX1J9NdvQ'
