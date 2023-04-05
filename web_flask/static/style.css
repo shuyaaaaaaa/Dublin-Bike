@@ -149,3 +149,7 @@ button.close-button{
 #route_request #route-submit-button:hover{
     background-color: #6486a7;
 }
+
+.Explanation p {
+    color: #282525;
+}
