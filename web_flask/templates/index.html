@@ -6,6 +6,7 @@
   </head>
   <body>
     <header>
+      
       <div id="logo">
         <h1>Dublin Bikes</h1>
       </div>
@@ -13,8 +14,19 @@
         <button id='search_button'>&#128269;</button>
       </div>
     </header>
-    <div id="map"></div>
-    <div id="detailed"></div>
+    <div id ="map_container">
+      
+      <div id="map"></div>
+
+      <div id="for_circle">
+        <input type="checkbox" id="check_box" name="check_box">
+        <label for="check_box">Show Circles</label> 
+      </div> 
+
+    </div>
+
+    <div id="detailed">
+    </div>
     <div id="route">
       <button id='route-close-button' class="close-button">&times;</button>
       <form action="/route" id='route_request' method="POST">
@@ -29,7 +41,7 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-      
+      var circles = [];
       // Map function
       //initialise the map to  Dublin and load as a roadmap
       function initMap(){
@@ -57,7 +69,8 @@
               map: map,
               title: "You are here",
               icon: {
-                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                url: "http://maps.google.com/mapfiles/ms/icons/red.png"
+                
               }
             });
       
@@ -147,14 +160,71 @@
           })
         })
 
+        
         // Generate markers
         for (var i = 0; i < data.length; i++){
           var station = data[i];
           var dynamic_data = live_station_data[i];
+        
           var marker = new google.maps.Marker({
             position: {lat: station[0], lng: station[1]},
             map: map
           });
+
+          var bikeavailability = dynamic_data.available_bikes;
+          var bikestandsavailability = dynamic_data.available_bike_stands;
+          var circleRadius = 100;
+          
+        
+          var circle = new google.maps.Circle({
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            strokeColor: '#FF0000',
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            map: map,
+            center: {lat: station[0], lng: station[1]},
+            radius: circleRadius,
+
+            
+          });
+          
+          circle.setVisible(false);
+          
+          if (bikeavailability > 10) {
+            circle.setOptions({
+              fillColor: '#00FF00',
+              strokeColor: '#00FF00'
+            });
+          } else if (0 < bikeavailability && bikeavailability <= 10) { 
+            circle.setOptions({
+              fillColor: '#FFFF00',
+              strokeColor: '#FFFF00'
+            });
+          } else if (bikeavailability == 0) {
+            circle.setOptions({
+              fillColor: '#FF0000',
+              strokeColor: '#FF0000'
+            });
+          } 
+          
+          if (bikestandsavailability == 0) {
+            circle.setOptions({
+              radius: circleRadius * 0.5
+            });
+          } 
+          
+          else if (10 < bikestandsavailability) { 
+            circle.setOptions({
+              radius: circleRadius * 2
+            });
+          } else if (0 < bikestandsavailability && bikestandsavailability <= 10) { 
+            circle.setOptions({
+              radius: circleRadius * 1
+            });
+          } 
+          
+          circles.push(circle);
 
           // Added dynamic station data on load instead of calling the API on every hover. Better performance.
           var infowindow = new google.maps.InfoWindow({
@@ -196,7 +266,24 @@
               }
             })(marker, infowindow));            
         }
+        
+
       }
+
+      function toggleCircles(){
+        for (var i = 0; i < circles.length; i++) {
+          var circle = circles[i];
+          if (circle.getVisible()) {
+            circle.setVisible(false); 
+          } else {
+            circle.setVisible(true); 
+          }
+        }
+      }
+
+      var check = document.getElementById('check_box');
+      check.addEventListener('click', toggleCircles);
+
   
       // George - Open and close side display
       $(document).on('click', '#close-button', function(){
@@ -215,6 +302,9 @@
       $(document).on('click', '#route-close-button', function(){
                 $("#route").removeClass('show'); // remove the 'show' class to hide the route div
             });
+
+      
+      
       
     </script>
     <!-- Googlemap API --> 

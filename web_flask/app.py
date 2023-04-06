@@ -92,6 +92,14 @@ def detailed():
                                 <p class='block_green'>This station is: {status}</p>
 
                             </div>
+                            <div class ="prediction">
+                                <div class ="Explanation"><p>Predictions for the next 5days</p></div>
+                                <button class="today">Today</button>
+                                <button class="tomorrow">Tomorrow</button>
+                                <button class="three">3 days later</button>
+                                <button class="four">4 days later</button>
+                                <button class="five">5 days later</button>
+                            </div>
                         </div>
                         
                 """
