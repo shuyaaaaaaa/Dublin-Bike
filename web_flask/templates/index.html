@@ -28,8 +28,8 @@
       </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-      
       // Map function
       //initialise the map to  Dublin and load as a roadmap
       function initMap(){
@@ -215,6 +215,75 @@
       $(document).on('click', '#route-close-button', function(){
                 $("#route").removeClass('show'); // remove the 'show' class to hide the route div
             });
+      
+      let availabilityBikeChartInstance;
+
+      function generateAvailabilityChart(data) {
+        const ctx = document.getElementById('availabilityChart').getContext('2d');
+        const labels = Object.keys(data);
+        const dataset = labels.map(hour => data[hour]['Avg A']);
+        const currentDay = getDay();
+
+        if(availabilityBikeChartInstance){
+          availabilityBikeChartInstance.destroy();
+        }
+
+        availabilityBikeChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Average Available Bikes per Hour (${currentDay})`,
+                    data: dataset,
+                    backgroundColor: 'rgba(20, 64, 105)',
+                    borderColor: 'rgba(20, 64, 105)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+      }
+
+      function getDay(){
+        const today = new Date();
+        const options = { weekday: 'long' };
+        return today.toLocaleDateString(undefined, options);
+      }
+
+      function generateOccupancyChart(data) {
+        const ctx = document.getElementById('occupancyChart').getContext('2d');
+        const labels = Object.keys(data);
+        const dataset = labels.map(hour => data[hour]['Avg O']);
+        const currentDay = getDay();
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Average Available Stands per Hour (${currentDay})`,
+                    data: dataset,
+                    backgroundColor: 'rgba(20, 64, 105)',
+                    borderColor: 'rgba(20, 64, 105)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+      }
+
       
     </script>
     <!-- Googlemap API --> 
