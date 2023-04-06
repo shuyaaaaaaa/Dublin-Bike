@@ -64,8 +64,10 @@ header{
 
 #search_button{
     background-color: #144069;
+    color: #f2f2f2;
+    font-weight: bold;
     border: none;
-    font-size: 25px;
+    font-size: 1.5rem;
     cursor: pointer;
 }
 
@@ -170,12 +172,14 @@ button.close-button{
     gap: 5px;
 }
 
+#route_request label{
+    font-weight: bold;
+}
+
 #route_request input{
-    background-color: #144069;
-    color: #f2f2f2;
     border: none;
     border-radius: 5px;
-    height: 20px;
+    height: 2rem;
 }
 
 #route_request input:focus{
