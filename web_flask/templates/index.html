@@ -188,9 +188,12 @@
                   success: function(response) {
                     $("#detailed").html(response); // update the detailed div with response
                     $("#detailed").addClass('show'); // fade in the detailed div
+                    generateAvailabilityChart(averageData); 
+                    generateOccupancyChart(averageData);
                     if($('#route').hasClass('show')){
                       $("#route").removeClass('show'); // remove the 'show' class to hide the route div if open
                     }
+
                   }
                 });
               }

@@ -184,9 +184,7 @@ def detailed():
                             </div>
                         </div>
                         <script>
-                            const averageData = {json.dumps(average_bikes_stands_hours)};
-                            generateAvailabilityChart(averageData);
-                            generateOccupancyChart(averageData)
+                            var averageData = {json.dumps(average_bikes_stands_hours)};
                         </script>
                         
                 """
