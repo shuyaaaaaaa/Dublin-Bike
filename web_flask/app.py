@@ -142,12 +142,16 @@ def route():
 
         return jsonify(route_data)
 
+
+
+
 #Get the prediction for this station:
 # Loading pickle file
 # de-serialize model.pkl file into an object called model using pickle
 ##feed in desired station number
-print("hi")
-model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{17}.pkl'
+#Need to get the station number for the desired station and store it in:
+station_number=92
+model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{station_number}.pkl'
 with open(model_number, 'rb') as handle:
     model = pickle.load(handle)
 
@@ -155,7 +159,24 @@ with open(model_number, 'rb') as handle:
 #Should be in the form of: 
 #Day, hour and it will predict the number of bikes available at that station
 # up to 5 days in advance
-X_test=[[10.89   ,5.14 , 0.00 ,    9   ,    0  ,      0  ,        0 ,0,       0 ,        0 ,      1]]
+#X_test=[['temperature', 'wind_speed', 'rain', 'availability_percentage', 'hour','Monday', 
+#           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday'],]
+
+#User enters a dateup to 5 days in the future for a specific day and hour
+# day and hour are stored in variables
+day='Monday'
+#so insert a 1 into the monday column
+hour=11
+# we query open weather and extract the following information:
+#temperature, wind_speed, rain
+temperature=10
+wind_speed=10
+rain=0
+#it is extracted within the model and is the predicted value returned by the model
+
+X_test=[[temperature, wind_speed, rain, hour,0,1,0,0,0,0,0]]
+#result should be the predicted bike availability for that station at that hour and day in the future
+# for the expected forecast conditions
 result = model.predict(X_test)
 print(result)
 
