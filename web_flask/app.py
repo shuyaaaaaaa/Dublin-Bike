@@ -75,21 +75,6 @@ def detailed():
                         status = station.get('status')
                         break
 
-                #Get the prediction for this station:
-                # Loading pickle file
-                # de-serialize model.pkl file into an object called model using pickle
-                ##feed in desired station number
-                model_number = f'/datamodel/models/model_{number}.pkl'
-                with open(model_number, 'rb') as handle:
-                    model = pickle.load(handle)
-
-                #X_test is the feature to query:
-                #Should be in the form of: 
-                #Day, hour and it will predict the number of bikes available at that station
-                # up to 5 days in advance
-                X_test=[[1, 12]]
-                result = model.predict(X_test)
-                
                 # Response HTML for POST request
                 text_response = f"""
                         <button id='close-button' class="close-button">&times;</button>
@@ -109,10 +94,6 @@ def detailed():
                             </div>
                             <div id='station_status'>
                                 <p class='block_green'>This station is: {status}</p>
-
-                            </div>
-                            <div id='prediction'>
-                                <p class='block_green'>Predicted bikes available at 12:00 on 04/03/2023: {result}</p>
                             </div>
                         </div>
                         
@@ -160,7 +141,24 @@ def route():
         print('Route data to be returned:', route_data)
 
         return jsonify(route_data)
-    
+
+#Get the prediction for this station:
+# Loading pickle file
+# de-serialize model.pkl file into an object called model using pickle
+##feed in desired station number
+print("hi")
+model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{17}.pkl'
+with open(model_number, 'rb') as handle:
+    model = pickle.load(handle)
+
+#X_test is the feature to query:
+#Should be in the form of: 
+#Day, hour and it will predict the number of bikes available at that station
+# up to 5 days in advance
+X_test=[[10.89   ,5.14 , 0.00 ,    9   ,    0  ,      0  ,        0 ,0,       0 ,        0 ,      1]]
+result = model.predict(X_test)
+print(result)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
