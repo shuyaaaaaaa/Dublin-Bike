@@ -3,6 +3,10 @@ import json
 import mysql.connector
 import login
 import requests
+import pickle
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
 
 app = Flask(__name__)
 
@@ -138,6 +142,18 @@ def route():
         print('Route data to be returned:', route_data)
 
         return jsonify(route_data)
+    
+# Loading pickle file
+# de-serialize model.pkl file into an object called model using pickle
+with open(model_number, 'rb') as handle:
+    model = pickle.load(handle)
+@route("/predict")
+def predict(X_test):
+# now we can call various methods over model as as:
+# Let X_test be the feature for which we want to predict the output
+result = model.predict(X_test)
+return jsonify(result)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
