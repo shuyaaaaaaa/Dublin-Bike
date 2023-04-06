@@ -23,6 +23,13 @@ def index():
         cursor.execute('SELECT position_lat, position_lng, name, number FROM static')
         data = cursor.fetchall()
 
+         # Get current weather data for home page
+        w = requests.get(login.owUri, params={'lat':login.owLat, 'lon':login.owLon, 'units':'metric', 'exclude': 'minutely,hourly,daily,alerts', 'appid':login.owKey})
+        
+        if w.status_code == 200:
+            print('Connected to OpenWeather and data collected successfully')
+            current_weather = w.json()
+
         # Connect to JCDecaux API for live station data: For marker hover
         r = requests.get(login.jcdUri, params={'contract':login.jcdName,
                                         'apiKey': login.jcdKey})
@@ -35,7 +42,7 @@ def index():
         else:
             print('Error connecting to JCDecaux', r.status_code)
 
-        return render_template('index.html', data=json.dumps(data), live_station_data=json.dumps(live_station_data))
+        return render_template('index.html', data=json.dumps(data), live_station_data=json.dumps(live_station_data), current_weather=json.dumps(current_weather))
     
     except Exception as e:
         print('Error connecting to database:', e)
@@ -57,16 +64,6 @@ def detailed():
                 )
             except Exception as e:
                     print('Error connecting to database. Error: ', e)
-            
-
-            # take the current day
-            # display average number of available bikes by hour
-            # display average number of stands by hour
-
-            # take the current date, determine the day, go back 7 until you can't anymore
-            #
-            # take all the wed in the database
-            # calculate
 
             # Find the current day
             current_day = datetime.now().strftime('%A')

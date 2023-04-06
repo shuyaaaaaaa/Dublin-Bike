@@ -13,6 +13,9 @@
         <button id='search_button'>&#128269;</button>
       </div>
     </header>
+    <div class="scroll-container">
+      <div id='current-weather' class="scroll-content"></div>
+    </div>
     <div id="map"></div>
     <div id="detailed"></div>
     <div id="route">
@@ -218,18 +221,45 @@
       $(document).on('click', '#route-close-button', function(){
                 $("#route").removeClass('show'); // remove the 'show' class to hide the route div
             });
-      
-      let availabilityBikeChartInstance;
 
+      // George Current Weather Function
+      var current_weather = {{ current_weather | safe }};
+
+      function convertTime(time){
+        const date = new Date(time * 1000);
+        // Get hours, minutes, and seconds
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        // Format the time
+        const readableTime = `${hours}:${minutes}`;
+        return readableTime;
+      }
+
+      function currentWeather(current_weather){
+        var today = `Today: <img src='/static/assets/weather_icons/${current_weather.current.weather[0].icon}.png' id='weather-icon'>`
+        var temp = `Temp: ${current_weather.current.temp}°C`;
+        var feels_like = `Feels Like: ${current_weather.current.feels_like}°C`
+        var pressure = `Pressure: ${current_weather.current.pressure}Pa`
+        var humidity = `Humidity: ${current_weather.current.humidity}`
+        var sunrise = `Sunrise: ${convertTime(current_weather.current.sunrise)}`
+        var sunset =`Sunset: ${convertTime(current_weather.current.sunset)}`
+        var weather = `<div class='weather-item'>${pressure}</div>
+                      <div class='weather-item'>${humidity}</div>
+                      <div class='weather-item'>${sunrise}</div>
+                      <div class='weather-item'>${sunset}</div>
+                      <div class='weather-item'>${feels_like}</div>
+                      <div class='weather-item'>${temp}</div>
+                      <div class='weather-item'>${today}</div>`
+        $('#current-weather').html(weather);
+        console.log(today)
+      }
+      
+      // George Historical Chart Functions
       function generateAvailabilityChart(data) {
         const ctx = document.getElementById('availabilityChart').getContext('2d');
         const labels = Object.keys(data);
         const dataset = labels.map(hour => data[hour]['Avg A']);
         const currentDay = getDay();
-
-        if(availabilityBikeChartInstance){
-          availabilityBikeChartInstance.destroy();
-        }
 
         availabilityBikeChartInstance = new Chart(ctx, {
             type: 'bar',
@@ -287,7 +317,8 @@
         });
       }
 
-      
+      currentWeather(current_weather);
+
     </script>
     <!-- Googlemap API --> 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3NV_XtqrUxY3YWqZfs1W7pL8EMM4xeoY&language=en&callback=initMap&libraries=places"></script>
