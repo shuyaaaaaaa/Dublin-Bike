@@ -2,30 +2,96 @@
 body {
     background-color: #144069;
     font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
 }
 
 header{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content:space-between;
+    padding: 1rem;
+}
+
+#header-right{
+    display: flex;
+    flex-direction: column;
 }
 
 #logo{
     color: white;
 }
 
+.scroll-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    background-color: #6486a7;
+    white-space: nowrap;
+  }
+
+#for_circle{
+    background-color: #144069;
+    color: #f2f2f2;
+    z-index: 9999;
+    size: 100px;
+    border-radius: 15px;
+    padding-right: 5px;
+}
+  
+.scroll-content {
+color: #144069;
+font-weight: bold;
+animation-name: move;
+animation-duration: 40s;
+animation-iteration-count: infinite;
+animation-timing-function: linear;
+}
+
+@keyframes move {
+0% {
+    transform: translateX(-50%);
+}
+100% {
+    transform: translateX(80%);
+}
+
+101%{
+    transform: translateX(-50%);
+}
+}
+
+#weather-icon{
+    height: 40px;
+    width: 40px;
+}
+
+#current-weather{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.weather-item{
+    display: flex;
+    align-items: center;
+}
+
 #search_button{
     background-color: #144069;
+    color: #f2f2f2;
+    font-weight: bold;
     border: none;
-    font-size: 25px;
+    font-size: 1.5rem;
     cursor: pointer;
 }
 
 #route{
     position: fixed;
     top: 0;
-    left: -300px;
-    width: 300px;
+    left: -400px;
+    width: 400px;
     height: 100%;
     background-color: #f2f2f2;
     transition: left 0.5s;
@@ -39,15 +105,15 @@ header{
 }
 
 #map {
-    height: 85vh;
+    height: 75vh;
     width: 100%;
   }
 
 #detailed {
     position: fixed;
     top: 0;
-    left: -300px;
-    width: 300px;
+    left: -400px;
+    width: 400px;
     height: 100%;
     background-color: #f2f2f2;
     transition: left 0.5s;
@@ -64,7 +130,6 @@ header{
     font-family: Arial, Helvetica, sans-serif;
     padding: 25px;
     position: relative;
-    top: 35px;
 
 }
 
@@ -123,12 +188,14 @@ button.close-button{
     gap: 5px;
 }
 
+#route_request label{
+    font-weight: bold;
+}
+
 #route_request input{
-    background-color: #6486a7;
-    color: #f2f2f2;
     border: none;
     border-radius: 5px;
-    height: 20px;
+    height: 2rem;
 }
 
 #route_request input:focus{
@@ -150,18 +217,3 @@ button.close-button{
     background-color: #6486a7;
 }
 
-#map-container {
-    position: relative;
-    width: 100%;
-    height: 400px; 
-  }
-
-#for_circle{
-    position: absolute;
-    top: 100px; 
-    right: 70px;
-    z-index: 9999;
-    size: 100px;
-    background-color: white;
-    padding-right: 5px;
-}
