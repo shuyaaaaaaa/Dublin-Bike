@@ -8,8 +8,13 @@ body {
 header{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content:space-between;
     padding: 1rem;
+}
+
+#header-right{
+    display: flex;
+    flex-direction: column;
 }
 
 #logo{
@@ -17,34 +22,45 @@ header{
 }
 
 .scroll-container {
+    display: flex;
+    flex-direction: row;
     width: 100%;
     height: auto;
     overflow: hidden;
     background-color: #6486a7;
     white-space: nowrap;
   }
-  
-  .scroll-content {
-    color: #144069;
-    font-weight: bold;
-    animation-name: move;
-    animation-duration: 40s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-  }
-  
-  @keyframes move {
-    0% {
-      transform: translateX(-50%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
 
-    101%{
-        transform: translateX(-50%);
-    }
-  }
+#for_circle{
+    background-color: #144069;
+    color: #f2f2f2;
+    z-index: 9999;
+    size: 100px;
+    border-radius: 15px;
+    padding-right: 5px;
+}
+  
+.scroll-content {
+color: #144069;
+font-weight: bold;
+animation-name: move;
+animation-duration: 40s;
+animation-iteration-count: infinite;
+animation-timing-function: linear;
+}
+
+@keyframes move {
+0% {
+    transform: translateX(-50%);
+}
+100% {
+    transform: translateX(80%);
+}
+
+101%{
+    transform: translateX(-50%);
+}
+}
 
 #weather-icon{
     height: 40px;
@@ -201,18 +217,3 @@ button.close-button{
     background-color: #6486a7;
 }
 
-#map-container {
-    position: relative;
-    width: 100%;
-    height: 400px; 
-  }
-
-#for_circle{
-    position: absolute;
-    top: 100px; 
-    right: 70px;
-    z-index: 9999;
-    size: 100px;
-    background-color: white;
-    padding-right: 5px;
-}
