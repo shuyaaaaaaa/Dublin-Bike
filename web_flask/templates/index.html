@@ -6,15 +6,26 @@
   </head>
   <body>
     <header>
+      
       <div id="logo">
         <h1>Dublin Bikes</h1>
       </div>
-      <div id="search">
-        <button id='search_button'>&#128269;</button>
+      <div id="header-right">
+        <div id="search">
+          <button id='search_button'>Route Finder &#128269;</button>
+        </div>
+        <div id="for_circle">
+          <input type="checkbox" id="check_box" name="check_box">
+          <label for="check_box">Markers (🟢🟠🔴)</label> 
+        </div> 
       </div>
     </header>
+    <div class="scroll-container">
+      <div id='current-weather' class="scroll-content"></div>
+    </div>
     <div id="map"></div>
-    <div id="detailed"></div>
+    <div id="detailed">
+    </div>
     <div id="route">
       <button id='route-close-button' class="close-button">&times;</button>
       <form action="/route" id='route_request' method="POST">
@@ -28,8 +39,9 @@
       </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-      
+      var circles = [];
       // Map function
       //initialise the map to  Dublin and load as a roadmap
       function initMap(){
@@ -57,7 +69,8 @@
               map: map,
               title: "You are here",
               icon: {
-                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                url: "http://maps.google.com/mapfiles/ms/icons/red.png"
+                
               }
             });
       
@@ -147,14 +160,71 @@
           })
         })
 
+        
         // Generate markers
         for (var i = 0; i < data.length; i++){
           var station = data[i];
           var dynamic_data = live_station_data[i];
+        
           var marker = new google.maps.Marker({
             position: {lat: station[0], lng: station[1]},
             map: map
           });
+
+          var bikeavailability = dynamic_data.available_bikes;
+          var bikestandsavailability = dynamic_data.available_bike_stands;
+          var circleRadius = 100;
+          
+        
+          var circle = new google.maps.Circle({
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            strokeColor: '#FF0000',
+            fillColor: '#FF0000',
+            fillOpacity: 0.35,
+            map: map,
+            center: {lat: station[0], lng: station[1]},
+            radius: circleRadius,
+
+            
+          });
+          
+          circle.setVisible(false);
+          
+          if (bikeavailability > 10) {
+            circle.setOptions({
+              fillColor: '#00FF00',
+              strokeColor: '#00FF00'
+            });
+          } else if (0 < bikeavailability && bikeavailability <= 10) { 
+            circle.setOptions({
+              fillColor: '#FFFF00',
+              strokeColor: '#FFFF00'
+            });
+          } else if (bikeavailability == 0) {
+            circle.setOptions({
+              fillColor: '#FF0000',
+              strokeColor: '#FF0000'
+            });
+          } 
+          
+          if (bikestandsavailability == 0) {
+            circle.setOptions({
+              radius: circleRadius * 0.5
+            });
+          } 
+          
+          else if (10 < bikestandsavailability) { 
+            circle.setOptions({
+              radius: circleRadius * 2
+            });
+          } else if (0 < bikestandsavailability && bikestandsavailability <= 10) { 
+            circle.setOptions({
+              radius: circleRadius * 1
+            });
+          } 
+          
+          circles.push(circle);
 
           // Added dynamic station data on load instead of calling the API on every hover. Better performance.
           var infowindow = new google.maps.InfoWindow({
@@ -188,15 +258,35 @@
                   success: function(response) {
                     $("#detailed").html(response); // update the detailed div with response
                     $("#detailed").addClass('show'); // fade in the detailed div
+                    generateAvailabilityChart(averageData); 
+                    generateOccupancyChart(averageData);
                     if($('#route').hasClass('show')){
                       $("#route").removeClass('show'); // remove the 'show' class to hide the route div if open
                     }
+
                   }
                 });
               }
             })(marker, infowindow));            
         }
+        
+
       }
+
+      function toggleCircles(){
+        for (var i = 0; i < circles.length; i++) {
+          var circle = circles[i];
+          if (circle.getVisible()) {
+            circle.setVisible(false); 
+          } else {
+            circle.setVisible(true); 
+          }
+        }
+      }
+
+      var check = document.getElementById('check_box');
+      check.addEventListener('click', toggleCircles);
+
   
       // George - Open and close side display
       $(document).on('click', '#close-button', function(){
@@ -215,7 +305,104 @@
       $(document).on('click', '#route-close-button', function(){
                 $("#route").removeClass('show'); // remove the 'show' class to hide the route div
             });
+
+      // George Current Weather Function
+      var current_weather = {{ current_weather | safe }};
+
+      function convertTime(time){
+        const date = new Date(time * 1000);
+        // Get hours, minutes, and seconds
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        // Format the time
+        const readableTime = `${hours}:${minutes}`;
+        return readableTime;
+      }
+
+      function currentWeather(current_weather){
+        var today = `Today: <img src='/static/assets/weather_icons/${current_weather.current.weather[0].icon}.png' id='weather-icon'>`
+        var temp = `Temp: ${current_weather.current.temp}°C`;
+        var feels_like = `Feels Like: ${current_weather.current.feels_like}°C`
+        var pressure = `Pressure: ${current_weather.current.pressure}Pa`
+        var humidity = `Humidity: ${current_weather.current.humidity}`
+        var sunrise = `Sunrise: ${convertTime(current_weather.current.sunrise)}`
+        var sunset =`Sunset: ${convertTime(current_weather.current.sunset)}`
+        var weather = `<div class='weather-item'>${pressure}</div>
+                      <div class='weather-item'>${humidity}</div>
+                      <div class='weather-item'>${sunrise}</div>
+                      <div class='weather-item'>${sunset}</div>
+                      <div class='weather-item'>${feels_like}</div>
+                      <div class='weather-item'>${temp}</div>
+                      <div class='weather-item'>${today}</div>`
+        $('#current-weather').html(weather);
+        console.log(today)
+      }
       
+      // George Historical Chart Functions
+      function generateAvailabilityChart(data) {
+        const ctx = document.getElementById('availabilityChart').getContext('2d');
+        const labels = Object.keys(data);
+        const dataset = labels.map(hour => data[hour]['Avg A']);
+        const currentDay = getDay();
+
+        availabilityBikeChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Average Available Bikes per Hour (${currentDay})`,
+                    data: dataset,
+                    backgroundColor: 'rgba(20, 64, 105)',
+                    borderColor: 'rgba(20, 64, 105)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+      }
+
+      function getDay(){
+        const today = new Date();
+        const options = { weekday: 'long' };
+        return today.toLocaleDateString(undefined, options);
+      }
+
+      function generateOccupancyChart(data) {
+        const ctx = document.getElementById('occupancyChart').getContext('2d');
+        const labels = Object.keys(data);
+        const dataset = labels.map(hour => data[hour]['Avg O']);
+        const currentDay = getDay();
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: `Average Available Stands per Hour (${currentDay})`,
+                    data: dataset,
+                    backgroundColor: 'rgba(20, 64, 105)',
+                    borderColor: 'rgba(20, 64, 105)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+      }
+
+      currentWeather(current_weather);
+
     </script>
     <!-- Googlemap API --> 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3NV_XtqrUxY3YWqZfs1W7pL8EMM4xeoY&language=en&callback=initMap&libraries=places"></script>
