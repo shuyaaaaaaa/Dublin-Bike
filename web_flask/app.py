@@ -74,6 +74,21 @@ def detailed():
                         available_bikes = station.get('available_bikes')
                         status = station.get('status')
                         break
+
+                #Get the prediction for this station:
+                # Loading pickle file
+                # de-serialize model.pkl file into an object called model using pickle
+                ##feed in desired station number
+                model_number = f'/datamodel/models/model_{number}.pkl'
+                with open(model_number, 'rb') as handle:
+                    model = pickle.load(handle)
+
+                #X_test is the feature to query:
+                #Should be in the form of: 
+                #Day, hour and it will predict the number of bikes available at that station
+                # up to 5 days in advance
+                X_test=[[1, 12]]
+                result = model.predict(X_test)
                 
                 # Response HTML for POST request
                 text_response = f"""
@@ -95,6 +110,9 @@ def detailed():
                             <div id='station_status'>
                                 <p class='block_green'>This station is: {status}</p>
 
+                            </div>
+                            <div id='prediction'>
+                                <p class='block_green'>Predicted bikes available at 12:00 on 04/03/2023: {result}</p>
                             </div>
                         </div>
                         
@@ -143,17 +161,6 @@ def route():
 
         return jsonify(route_data)
     
-# Loading pickle file
-# de-serialize model.pkl file into an object called model using pickle
-with open(model_number, 'rb') as handle:
-    model = pickle.load(handle)
-@route("/predict")
-def predict(X_test):
-# now we can call various methods over model as as:
-# Let X_test be the feature for which we want to predict the output
-result = model.predict(X_test)
-return jsonify(result)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
