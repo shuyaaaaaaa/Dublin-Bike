@@ -13,7 +13,25 @@
       <div id="predictions">
           <button id='plan_journey_button'>Plan Journey</button>
           <div id="pred_content">
-              <p>Test</p>
+            <!--Button for Date-->
+            <button class="datebtn">Enter the Date of your Journey:</button>
+            <select id="dateDropdown">
+              <!-- Placeholder -->
+              <option value="" disabled selected>Select a date</option>
+            </select>
+            <!--Button for Time-->
+            <button class="timebtn">Enter the Time of your Journey (Hour):</button>
+            <select id="timeDropdown">
+              <!-- Placeholder -->
+              <option value="" disabled selected>Select a time (hour)</option>
+            </select>
+            <!--Button for Station-->
+            <button class="timebtn">Enter the Station you need for your Journey:</button>
+            <select id="stationDropdown">
+              <!-- Placeholder -->
+              <option value="" disabled selected>Select a station</option>
+            </select>
+            <button id='predict_button'>Predict</button>
           </div>
       </div>
       <div id="header-right">
@@ -418,16 +436,73 @@
 
 
       //when the user selects enter for those values call the generatePredictions function
+      // next steps:
+      //create 3 dropdown menus for user to enter station, date and time
+      // Get the current date
+      var currentDate = new Date();
+      // Loop through the next 5 days and generate options for each date
+      //is this range correct?
+      for (var i = 2; i < 7; i++) {
+        // Create a new date object for the current date + i days
+        var date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
+        // Format the date as YYYY-MM-DD
+        var formattedDate = date.toISOString().slice(0, 10);
+        // Create a new option element for the date and add it to the dropdown menu
+        var option = document.createElement("option");
+        option.text = formattedDate;
+        option.value = formattedDate;
+        dateDropdown.add(option);
+      }
 
+      var dateDropwdown = $("#dateDropdown").val();
+      var timeDropdown = document.getElementById("timeDropdown");
+
+      for (var i=0;i<=7;i++){
+        //weather forecast is every 3 hours
+        var time=i*3;
+        var option = document.createElement("option");
+        option.text = time;
+        option.value = time;
+        timeDropdown.add(option);
+      }
+      //finally the station dropdown menu
+      var stationDropdown = document.getElementById("stationDropdown");
+      //get the station names from the station data
+      var station_data= {{ live_station_data | safe }};
+      //get the station numbers
+      //loop through the station names and add them to the dropdown menu
+      for (var i=0;i<station_data.length;i++){
+        var option = document.createElement("option");
+        var stat=station_data[i]
+        var stationNum = stat.number;
+        var stationName=stat.name;
+        option.text = stationName+' '+stationNum;
+        option.value = stationNum;
+        stationDropdown.add(option);
+      }
+      
+      //call the generate predictions function when subit button is clicked
+      $(document).on('click', '#predict_button', function(){
+        //call the generate predictions function
+        X_test=generatePredictions()
+        console.log(X_test)
+      });
+      
+//Left to do:
+// fix the weather call to get the correct weather information
+// send the X_test data to the correct prediction model
+// do this in app.route predict
+//return the availability percentage here
+//process this and graph it
 
 
       function generatePredictions(){
         //make these drop down menus
-        var user_pred_station=93
+        var user_pred_station=stationDropdown.value;
         // drop down of next 5 days
-        var user_pred_date = '2023-04-10'
+        var user_pred_date = dateDropdown.value;
         //drop down from hours 0,3,6,9,12,15,18,21
-        var user_pred_time = '15:00:00'
+        var user_pred_time = timeDropdown.value;
         //this value can be used for getting the correct weather data
         var merge_pred_date_time = user_pred_date + ' ' + user_pred_time
 
@@ -439,10 +514,10 @@
           for (var i=0; i<$(forecast_weather.cnt); i++){
             if( $(forecast_weather.list[i].dt_txt) == merge_pred_date_time){
               //extract temperature, wind speed and rain
+              conole.log(forecast_weather.list[i])
               var f_temp = $(forecast_weather.list[i].main.temp)-273.15
               var f_wind_speed = $(forecast_weather.list[i].wind.speed)
-              var time="3h"
-              var f_rain = $(forecast_weather.list[i].rain.time)
+              var f_rain = $(forecast_weather.list[i].rain["3h"])
               break
             }
           }
@@ -453,6 +528,7 @@
         var pred_wind_speed=0
         var pred_rain=0
         pred_temp, pred_wind_speed, pred_rain = forecastWeather(forecast_weather)
+        console.log(pred_temp, pred_wind_speed, pred_rain)
  
         //convert the hour to integer format
         var user_pred_time_int = parseInt(user_pred_time)
@@ -466,10 +542,7 @@
         X_test.forEach((column) => {
           column[user_pred_day_col] = 1;
         });
-        //print the X_test array
-        console.log(X_test)
-        //pass the X_test array to the model
-
+        return X_test
       }
 
     </script>

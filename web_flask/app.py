@@ -162,10 +162,6 @@ def detailed():
                         available_bike_stands = station.get('available_bike_stands')
                         available_bikes = station.get('available_bikes')
                         status = station.get('status')
-                        #load the model for the station the user selects
-                        model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{number}.pkl'
-                        with open(model_number, 'rb') as handle:
-                            model = pickle.load(handle)
                         break
 
                 # Response HTML for POST request
