@@ -34,11 +34,12 @@ def index():
             print('Connected to OpenWeather and data collected successfully')
             current_weather = w.json()
 
-        wf=requests.get(login.owFor, params={'lat':login.owLat, 'lon':login.owLon, 'units':'metric', 'exclude':'feels_like','appid':login.owKey})#exclude more?
+        wf=requests.get(login.owFor, params={'lat':login.owLat, 'lon':login.owLon, 'units':'metric','appid':login.owKey})#exclude more?
 
         if wf.status_code == 200:
             print('Connected to OpenWeather and collected forecast data successfully')
-            forecast_weather = w.json()
+            forecast_weather = wf.json()
+            print(forecast_weather)
         
 
         # Connect to JCDecaux API for live station data: For marker hover

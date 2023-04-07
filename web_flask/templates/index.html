@@ -494,6 +494,7 @@
 // do this in app.route predict
 //return the availability percentage here
 //process this and graph it
+//the time is from the next 5 days starting right now
 
 
       function generatePredictions(){
@@ -508,13 +509,13 @@
 
         //Cian - weather forecast function
         var forecast_weather= {{ forecast_weather | safe }};
-
+        conole.log(forecast_weather.list)
         function forecastWeather(forecast_weather){
           //find the correct weather data for the date and time the user has selected
           for (var i=0; i<$(forecast_weather.cnt); i++){
             if( $(forecast_weather.list[i].dt_txt) == merge_pred_date_time){
               //extract temperature, wind speed and rain
-              conole.log(forecast_weather.list[i])
+             
               var f_temp = $(forecast_weather.list[i].main.temp)-273.15
               var f_wind_speed = $(forecast_weather.list[i].wind.speed)
               var f_rain = $(forecast_weather.list[i].rain["3h"])
