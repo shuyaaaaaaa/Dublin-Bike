@@ -10,6 +10,11 @@
       <div id="logo">
         <h1>Dublin Bikes</h1>
       </div>
+      <div id="predictions">
+        <div id="plan_journey">
+          <button id='plan_journey_button'>Plan Journey</button>
+        </div>
+      </div>
       <div id="header-right">
         <div id="search">
           <button id='search_button'>Route Finder &#128269;</button>
@@ -403,8 +408,83 @@
 
       currentWeather(current_weather);
 
+      //Cian user interaction with date and time pickers
+
+function currentWeather(current_weather){
+  var today = `Today: <img src='/static/assets/weather_icons/${current_weather.current.weather[0].icon}.png' id='weather-icon'>`
+  var temp = `Temp: ${current_weather.current.temp}°C`;
+  var feels_like = `Feels Like: ${current_weather.current.feels_like}°C`
+  var pressure = `Pressure: ${current_weather.current.pressure}Pa`
+  var humidity = `Humidity: ${current_weather.current.humidity}`
+  var sunrise = `Sunrise: ${convertTime(current_weather.current.sunrise)}`
+  var sunset =`Sunset: ${convertTime(current_weather.current.sunset)}`
+
+
+
+      function generatePredictions(){
+        //make these drop down menus
+        // drop down of next 5 days
+        var user_pred_date = '2023-04-10'
+        //drop down from hours 0,3,6,9,12,15,18,21
+        var user_pred_time = '15:00:00'
+        //this value can be used for getting the correct weather data
+        var merge_pred_date_time = user_pred_date + ' ' + user_pred_time
+
+
+
+        var user_pred_station = 93
+        // now calculate the weather data with an open weather api request for that date and time
+      
+      }
+
+      //Cian - weather forecast function
+      var forecast_weather= {{ forecast_weather | safe }};
+
+      function forecastWeather(forecast_weather){
+        //find the correct weather data for the date and time the user has selected
+        for (var i=0; i<$(forecast_weather.cnt); i++){
+          if( $(forecast_weather.list.[i].dt_txt) == merge_pred_date_time){
+            //extract 
+          }
+        }
+        $(forecast_weather.list.[i])
+      }
+
+      for (var i = 0; i < circles.length; i++) {
+          var circle = circles[i];
+          if (circle.getVisible()) {
+            circle.setVisible(false); 
+          } else {
+            circle.setVisible(true); 
+          }
+
+      function togglePredictions(){
+        if($('#predictions').hasClass('show')){
+          $("#predictions").removeClass('show'); // remove the 'show' class to hide the detailed div
+        } else {
+          generatePredictions();
+        }
+
+      }
+
+      var check = document.getElementById('plan_journey_button');
+      check.addEventListener('click', togglePredictions);
+
+      $(function() {
+        $( "#datepicker" ).datepicker({
+            showOn: "button",
+            buttonImage: "images/calendar.gif",
+            buttonImageOnly: true,
+            minDate: 0, 
+            maxDate: "+0M +5D"
+        });
+    });
+
     </script>
     <!-- Googlemap API --> 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3NV_XtqrUxY3YWqZfs1W7pL8EMM4xeoY&language=en&callback=initMap&libraries=places"></script>
+    <!-- jQuery Date picker -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
   </body>
 </html>

@@ -34,6 +34,13 @@ def index():
             print('Connected to OpenWeather and data collected successfully')
             current_weather = w.json()
 
+        wf=requests.get(login.owFor, params={'lat':login.owLat, 'lon':login.owLon, 'units':'metric', 'exclude':'feels_like','appid':login.owKey})#exclude more?
+
+        if wf.status_code == 200:
+            print('Connected to OpenWeather and data collected forecast data successfully')
+            forecast_weather = w.json()
+        
+
         # Connect to JCDecaux API for live station data: For marker hover
         r = requests.get(login.jcdUri, params={'contract':login.jcdName,
                                         'apiKey': login.jcdKey})
@@ -46,7 +53,7 @@ def index():
         else:
             print('Error connecting to JCDecaux', r.status_code)
 
-        return render_template('index.html', data=json.dumps(data), live_station_data=json.dumps(live_station_data), current_weather=json.dumps(current_weather))
+        return render_template('index.html', data=json.dumps(data), live_station_data=json.dumps(live_station_data), current_weather=json.dumps(current_weather), forecast_weather=json.dumps(forecast_weather))
     
     except Exception as e:
         print('Error connecting to database:', e)
@@ -155,6 +162,10 @@ def detailed():
                         available_bike_stands = station.get('available_bike_stands')
                         available_bikes = station.get('available_bikes')
                         status = station.get('status')
+                        #load the model for the station the user selects
+                        model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{number}.pkl'
+                        with open(model_number, 'rb') as handle:
+                            model = pickle.load(handle)
                         break
 
                 # Response HTML for POST request
@@ -184,7 +195,9 @@ def detailed():
                                 <canvas id="occupancyChart"></canvas>
                             </div>
                             <div class ="prediction">
-                                <div class ="Explanation"><p>Predictions for the next 5days</p></div>
+                                <div class ="Explanation"><p>Choose a time and date within the next 5 days:</p></div>
+                                <p>Date: <input type="text" id="datepicker"></p>
+                                
                                 <button class="today">Today</button>
                                 <button class="tomorrow">Tomorrow</button>
                                 <button class="three">3 days later</button>
@@ -258,7 +271,7 @@ with open(model_number, 'rb') as handle:
 #Should be in the form of: 
 #Day, hour and it will predict the number of bikes available at that station
 # up to 5 days in advance
-#X_test=[['temperature', 'wind_speed', 'rain', 'availability_percentage', 'hour','Monday', 
+#X_test=[['temperature', 'wind_speed', 'rain',  'hour','Monday', 
 #           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday'],]
 
 #User enters a dateup to 5 days in the future for a specific day and hour
@@ -278,6 +291,8 @@ X_test=[[temperature, wind_speed, rain, hour,0,1,0,0,0,0,0]]
 # for the expected forecast conditions
 result = model.predict(X_test)
 print(result)
+
+
 
 
 if __name__ == '__main__':
