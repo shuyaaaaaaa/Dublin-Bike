@@ -37,7 +37,7 @@ def index():
         wf=requests.get(login.owFor, params={'lat':login.owLat, 'lon':login.owLon, 'units':'metric', 'exclude':'feels_like','appid':login.owKey})#exclude more?
 
         if wf.status_code == 200:
-            print('Connected to OpenWeather and data collected forecast data successfully')
+            print('Connected to OpenWeather and collected forecast data successfully')
             forecast_weather = w.json()
         
 
@@ -194,16 +194,6 @@ def detailed():
                             <div id='occupancy_chart'>
                                 <canvas id="occupancyChart"></canvas>
                             </div>
-                            <div class ="prediction">
-                                <div class ="Explanation"><p>Choose a time and date within the next 5 days:</p></div>
-                                <p>Date: <input type="text" id="datepicker"></p>
-                                
-                                <button class="today">Today</button>
-                                <button class="tomorrow">Tomorrow</button>
-                                <button class="three">3 days later</button>
-                                <button class="four">4 days later</button>
-                                <button class="five">5 days later</button>
-                            </div>
                         </div>
                         <script>
                             var averageData = {json.dumps(average_bikes_stands_hours)};
@@ -255,8 +245,6 @@ def route():
         return jsonify(route_data)
 
 
-
-
 #Get the prediction for this station:
 # Loading pickle file
 # de-serialize model.pkl file into an object called model using pickle
@@ -271,8 +259,8 @@ with open(model_number, 'rb') as handle:
 #Should be in the form of: 
 #Day, hour and it will predict the number of bikes available at that station
 # up to 5 days in advance
-#X_test=[['temperature', 'wind_speed', 'rain',  'hour','Monday', 
-#           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday'],]
+#X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
+#           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
 
 #User enters a dateup to 5 days in the future for a specific day and hour
 # day and hour are stored in variables

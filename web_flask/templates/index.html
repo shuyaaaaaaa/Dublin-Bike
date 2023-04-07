@@ -11,9 +11,10 @@
         <h1>Dublin Bikes</h1>
       </div>
       <div id="predictions">
-        <div id="plan_journey">
           <button id='plan_journey_button'>Plan Journey</button>
-        </div>
+          <div id="pred_content">
+              <p>Test</p>
+          </div>
       </div>
       <div id="header-right">
         <div id="search">
@@ -409,20 +410,20 @@
       currentWeather(current_weather);
 
       //Cian user interaction with date and time pickers
+      //when the plan journey button is clicked display a menu with the following dropwdowns
+      //station, date and time
+      $(document).on('click', '#plan_journey_button', function(){
+        $("#pred_content").toggleClass('show');
+      });
 
-function currentWeather(current_weather){
-  var today = `Today: <img src='/static/assets/weather_icons/${current_weather.current.weather[0].icon}.png' id='weather-icon'>`
-  var temp = `Temp: ${current_weather.current.temp}°C`;
-  var feels_like = `Feels Like: ${current_weather.current.feels_like}°C`
-  var pressure = `Pressure: ${current_weather.current.pressure}Pa`
-  var humidity = `Humidity: ${current_weather.current.humidity}`
-  var sunrise = `Sunrise: ${convertTime(current_weather.current.sunrise)}`
-  var sunset =`Sunset: ${convertTime(current_weather.current.sunset)}`
+
+      //when the user selects enter for those values call the generatePredictions function
 
 
 
       function generatePredictions(){
         //make these drop down menus
+        var user_pred_station=93
         // drop down of next 5 days
         var user_pred_date = '2023-04-10'
         //drop down from hours 0,3,6,9,12,15,18,21
@@ -430,61 +431,50 @@ function currentWeather(current_weather){
         //this value can be used for getting the correct weather data
         var merge_pred_date_time = user_pred_date + ' ' + user_pred_time
 
+        //Cian - weather forecast function
+        var forecast_weather= {{ forecast_weather | safe }};
 
-
-        var user_pred_station = 93
-        // now calculate the weather data with an open weather api request for that date and time
-      
-      }
-
-      //Cian - weather forecast function
-      var forecast_weather= {{ forecast_weather | safe }};
-
-      function forecastWeather(forecast_weather){
-        //find the correct weather data for the date and time the user has selected
-        for (var i=0; i<$(forecast_weather.cnt); i++){
-          if( $(forecast_weather.list.[i].dt_txt) == merge_pred_date_time){
-            //extract 
+        function forecastWeather(forecast_weather){
+          //find the correct weather data for the date and time the user has selected
+          for (var i=0; i<$(forecast_weather.cnt); i++){
+            if( $(forecast_weather.list[i].dt_txt) == merge_pred_date_time){
+              //extract temperature, wind speed and rain
+              var f_temp = $(forecast_weather.list[i].main.temp)-273.15
+              var f_wind_speed = $(forecast_weather.list[i].wind.speed)
+              var time="3h"
+              var f_rain = $(forecast_weather.list[i].rain.time)
+              break
+            }
           }
-        }
-        $(forecast_weather.list.[i])
-      }
-
-      for (var i = 0; i < circles.length; i++) {
-          var circle = circles[i];
-          if (circle.getVisible()) {
-            circle.setVisible(false); 
-          } else {
-            circle.setVisible(true); 
-          }
-
-      function togglePredictions(){
-        if($('#predictions').hasClass('show')){
-          $("#predictions").removeClass('show'); // remove the 'show' class to hide the detailed div
-        } else {
-          generatePredictions();
+          return f_temp, f_wind_speed, f_rain
         }
 
-      }
-
-      var check = document.getElementById('plan_journey_button');
-      check.addEventListener('click', togglePredictions);
-
-      $(function() {
-        $( "#datepicker" ).datepicker({
-            showOn: "button",
-            buttonImage: "images/calendar.gif",
-            buttonImageOnly: true,
-            minDate: 0, 
-            maxDate: "+0M +5D"
+        var pred_temp=0
+        var pred_wind_speed=0
+        var pred_rain=0
+        pred_temp, pred_wind_speed, pred_rain = forecastWeather(forecast_weather)
+ 
+        //convert the hour to integer format
+        var user_pred_time_int = parseInt(user_pred_time)
+        //extract the future day of the week from the date
+        const date = new Date(user_pred_date);
+        const day = date.getDay(); // returns a number between 0 (Sunday) and 6 (Saturday)
+        //insert a 1 in the column corresponding to the day of the week
+        var user_pred_day_col=day+4
+        //set all days to zero initially
+        var X_test= [[pred_temp,pred_wind_speed,pred_rain,user_pred_time_int,0,0,0,0,0,0,0]]
+        X_test.forEach((column) => {
+          column[user_pred_day_col] = 1;
         });
-    });
+        //print the X_test array
+        console.log(X_test)
+        //pass the X_test array to the model
+
+      }
 
     </script>
     <!-- Googlemap API --> 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3NV_XtqrUxY3YWqZfs1W7pL8EMM4xeoY&language=en&callback=initMap&libraries=places"></script>
     <!-- jQuery Date picker -->
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
   </body>
 </html>
