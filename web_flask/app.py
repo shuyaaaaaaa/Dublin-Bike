@@ -38,9 +38,7 @@ def index():
 
         if wf.status_code == 200:
             print('Connected to OpenWeather and collected forecast data successfully')
-            forecast_weather = wf.json()
-            print(forecast_weather)
-        
+            forecast_weather = wf.json()        
 
         # Connect to JCDecaux API for live station data: For marker hover
         r = requests.get(login.jcdUri, params={'contract':login.jcdName,

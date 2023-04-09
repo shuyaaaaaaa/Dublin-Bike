@@ -461,8 +461,9 @@
         //weather forecast is every 3 hours
         var time=i*3;
         var option = document.createElement("option");
-        option.text = time;
-        option.value = time;
+        var timeString = time.toString().padStart(2, "0") + ":00:00";
+        option.text = timeString;
+        option.value = timeString;
         timeDropdown.add(option);
       }
       //finally the station dropdown menu
@@ -509,27 +510,28 @@
 
         //Cian - weather forecast function
         var forecast_weather= {{ forecast_weather | safe }};
-        conole.log(forecast_weather.list)
+        //conole.log(forecast_weather.list)
         function forecastWeather(forecast_weather){
           //find the correct weather data for the date and time the user has selected
-          for (var i=0; i<$(forecast_weather.cnt); i++){
-            if( $(forecast_weather.list[i].dt_txt) == merge_pred_date_time){
+          for (var i=0; i<forecast_weather.list.length; i++){
+            console.log(forecast_weather.list[i].dt_txt)
+            console.log(merge_pred_date_time)
+            var dateStr = forecast_weather.list[i].dt_txt
+            if( dateStr == merge_pred_date_time){
               //extract temperature, wind speed and rain
              
-              var f_temp = $(forecast_weather.list[i].main.temp)-273.15
-              var f_wind_speed = $(forecast_weather.list[i].wind.speed)
-              var f_rain = $(forecast_weather.list[i].rain["3h"])
-              break
+              var f_temp = forecast_weather.list[i].main.temp;
+              var f_wind_speed = forecast_weather.list[i].wind.speed
+              // check is rain is present, if it is then extract rain val,
+              //if not then set to 0 instead of null
+              var f_rain = forecast_weather.list[i].rain ? forecast_weather.list[i].rain["3h"] : 0;
+              return [f_temp, f_wind_speed, f_rain];
             }
           }
-          return f_temp, f_wind_speed, f_rain
+          return null; //if no data obtained
         }
 
-        var pred_temp=0
-        var pred_wind_speed=0
-        var pred_rain=0
-        pred_temp, pred_wind_speed, pred_rain = forecastWeather(forecast_weather)
-        console.log(pred_temp, pred_wind_speed, pred_rain)
+        var [pred_temp, pred_wind_speed, pred_rain] = forecastWeather(forecast_weather);
  
         //convert the hour to integer format
         var user_pred_time_int = parseInt(user_pred_time)
