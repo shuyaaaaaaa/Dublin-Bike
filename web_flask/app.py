@@ -245,37 +245,40 @@ def route():
 # de-serialize model.pkl file into an object called model using pickle
 ##feed in desired station number
 #Need to get the station number for the desired station and store it in:
-station_number=92
-model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{station_number}.pkl'
-with open(model_number, 'rb') as handle:
-    model = pickle.load(handle)
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
+    if request.method == 'POST':
+        #Get the station number from the form
+        station_number = request.form['station_selected']
+        #unstringify the station number
+        station_number = int(station_number)
+        X_test = request.form['X_test']
+        #Unstringify the X_test
+        X_test=json.loads(X_test)
+        #Load the model for that station
+        model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{station_number}.pkl'
+        with open(model_number, 'rb') as handle:
+            model = pickle.load(handle)
 
-#X_test is the feature to query:
-#Should be in the form of: 
-#Day, hour and it will predict the number of bikes available at that station
-# up to 5 days in advance
-#X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
-#           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
+        #X_test is the feature to query:
+        #Should be in the form of: 
+        #Day, hour and it will predict the number of bikes available at that station
+        # up to 5 days in advance
+        #X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
+        #           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
 
-#User enters a dateup to 5 days in the future for a specific day and hour
-# day and hour are stored in variables
-day='Monday'
-#so insert a 1 into the monday column
-hour=11
-# we query open weather and extract the following information:
-#temperature, wind_speed, rain
-temperature=10
-wind_speed=10
-rain=0
-#it is extracted within the model and is the predicted value returned by the model
-
-X_test=[[temperature, wind_speed, rain, hour,0,1,0,0,0,0,0]]
-#result should be the predicted bike availability for that station at that hour and day in the future
-# for the expected forecast conditions
-result = model.predict(X_test)
-print(result)
-
-
+        #Get the prediction
+        prediction = model.predict(X_test)
+        #Return the prediction
+        #converrt it to a string
+        prediction = np.array2string(prediction)
+        #remove the square brackets
+        prediction = prediction.replace('[', '')
+        prediction = prediction.replace(']', '')
+        added_info='% of bikes will be available at this station at this time'
+        prediction =prediction+added_info
+        print('Prediction:', prediction)
+        return prediction
 
 
 if __name__ == '__main__':

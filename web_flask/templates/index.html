@@ -32,6 +32,9 @@
               <option value="" disabled selected>Select a station</option>
             </select>
             <button id='predict_button'>Predict</button>
+            <div id="result">
+              <p id="result_text"></p>
+            </div>
           </div>
       </div>
       <div id="header-right">
@@ -483,11 +486,29 @@
       }
       
       //call the generate predictions function when subit button is clicked
+      //and send to app.py /predict route
       $(document).on('click', '#predict_button', function(){
         //call the generate predictions function
-        X_test=generatePredictions()
-        console.log(X_test)
+        X_test=generatePredictions();
+        X_test=JSON.stringify(X_test);
+        station_selected = stationDropdown.value;
+        //remove the double quotes
+        station_selected=JSON.stringify(station_selected);
+        station_selected=station_selected.replace(/["]+/g, '');
+        console.log(X_test, station_selected);
+        //Now send X_test to app.py to get the prediction along with the station number
+        $.ajax({
+                    type: "POST",
+                    url: "/predict",
+                    data: { station_selected, X_test },
+                    success: function(response) {
+                      $("#result_text").html(response); // show the result
+                    }
+                });
       });
+
+      
+
       
 //Left to do:
 // fix the weather call to get the correct weather information
