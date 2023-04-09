@@ -17,6 +17,24 @@ header{
     flex-direction: column;
 }
 
+#pred_content{
+    position: fixed;
+    top: 0;
+    left: -400px;
+    width: 400px;
+    height: 100%;
+    background-color: #f2f2f2;
+    transition: left 0.5s;
+    color:#282525;
+    display: flex;
+    flex-direction: column;
+    z-index: 999; /* set the z-index to 999 */
+}
+
+#pred_content.show{
+    left:0;
+}
+
 #logo{
     color: white;
 }

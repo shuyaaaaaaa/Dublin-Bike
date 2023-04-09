@@ -3,6 +3,10 @@ import json
 import mysql.connector
 import login
 import requests
+import pickle
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
 from datetime import datetime
 
 app = Flask(__name__)
@@ -30,6 +34,12 @@ def index():
             print('Connected to OpenWeather and data collected successfully')
             current_weather = w.json()
 
+        wf=requests.get(login.owFor, params={'lat':login.owLat, 'lon':login.owLon, 'units':'metric','appid':login.owKey})#exclude more?
+
+        if wf.status_code == 200:
+            print('Connected to OpenWeather and collected forecast data successfully')
+            forecast_weather = wf.json()        
+
         # Connect to JCDecaux API for live station data: For marker hover
         r = requests.get(login.jcdUri, params={'contract':login.jcdName,
                                         'apiKey': login.jcdKey})
@@ -42,7 +52,7 @@ def index():
         else:
             print('Error connecting to JCDecaux', r.status_code)
 
-        return render_template('index.html', data=json.dumps(data), live_station_data=json.dumps(live_station_data), current_weather=json.dumps(current_weather))
+        return render_template('index.html', data=json.dumps(data), live_station_data=json.dumps(live_station_data), current_weather=json.dumps(current_weather), forecast_weather=json.dumps(forecast_weather))
     
     except Exception as e:
         print('Error connecting to database:', e)
@@ -152,7 +162,7 @@ def detailed():
                         available_bikes = station.get('available_bikes')
                         status = station.get('status')
                         break
-                
+
                 # Response HTML for POST request
                 text_response = f"""
                         <button id='close-button' class="close-button">&times;</button>
@@ -178,14 +188,6 @@ def detailed():
                             </div>
                             <div id='occupancy_chart'>
                                 <canvas id="occupancyChart"></canvas>
-                            </div>
-                            <div class ="prediction">
-                                <div class ="Explanation"><p>Predictions for the next 5days</p></div>
-                                <button class="today">Today</button>
-                                <button class="tomorrow">Tomorrow</button>
-                                <button class="three">3 days later</button>
-                                <button class="four">4 days later</button>
-                                <button class="five">5 days later</button>
                             </div>
                         </div>
                         <script>
@@ -236,6 +238,47 @@ def route():
         print('Route data to be returned:', route_data)
 
         return jsonify(route_data)
+
+
+#Get the prediction for this station:
+# Loading pickle file
+# de-serialize model.pkl file into an object called model using pickle
+##feed in desired station number
+#Need to get the station number for the desired station and store it in:
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
+    if request.method == 'POST':
+        #Get the station number from the form
+        station_number = request.form['station_selected']
+        #unstringify the station number
+        station_number = int(station_number)
+        X_test = request.form['X_test']
+        #Unstringify the X_test
+        X_test=json.loads(X_test)
+        #Load the model for that station
+        model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{station_number}.pkl'
+        with open(model_number, 'rb') as handle:
+            model = pickle.load(handle)
+
+        #X_test is the feature to query:
+        #Should be in the form of: 
+        #Day, hour and it will predict the number of bikes available at that station
+        # up to 5 days in advance
+        #X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
+        #           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
+
+        #Get the prediction
+        prediction = model.predict(X_test)
+        #Return the prediction
+        #converrt it to a string
+        prediction = np.array2string(prediction)
+        #remove the square brackets
+        prediction = prediction.replace('[', '')
+        prediction = prediction.replace(']', '')
+        added_info = f"% of bikes will be available at station number {station_number} at {X_test[0][3]}:00."
+        prediction =prediction+added_info
+        return prediction
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -15,3 +15,4 @@ owKey = 'dc10a64d94582c1b1984fe0c7e9a22a3'
 owLat = 53.3498006
 owLon = -6.2602964
 owUri = 'https://api.openweathermap.org/data/3.0/onecall?'
+owFor=  'https://api.openweathermap.org/data/2.5/forecast?'
