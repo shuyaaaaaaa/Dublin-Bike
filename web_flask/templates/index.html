@@ -105,7 +105,7 @@
           });
         }
 
-        // Route Function
+        // Route Function-Cian
         // Use AJAX to catch route form submission and then update the map with the response.
         $(document).ready(function(){
           $('#route_request').submit(function(event){
@@ -430,7 +430,7 @@
 
       currentWeather(current_weather);
 
-      //Cian user interaction with date and time pickers
+      //Cian user interaction with date and time dropdowns
       //when the plan journey button is clicked display a menu with the following dropwdowns
       //station, date and time
       $(document).on('click', '#plan_journey_button', function(){
@@ -443,9 +443,14 @@
       //create 3 dropdown menus for user to enter station, date and time
       // Get the current date
       var currentDate = new Date();
+      var currentHour = currentDate.getHours();
+      //the first day and last day is handled differently
+      //current day starts at next 3 hour interval
+      var remainder = currentHour % 3;
+      var startHour = currentHour + (3 - remainder);
       // Loop through the next 5 days and generate options for each date
       //is this range correct?
-      for (var i = 2; i < 7; i++) {
+      for (var i = 1; i < 7; i++) {
         // Create a new date object for the current date + i days
         var date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
         // Format the date as YYYY-MM-DD
@@ -457,22 +462,69 @@
         dateDropdown.add(option);
       }
 
-      var dateDropwdown = $("#dateDropdown").val();
       var timeDropdown = document.getElementById("timeDropdown");
 
-      for (var i=0;i<=7;i++){
-        //weather forecast is every 3 hours
-        var time=i*3;
-        var option = document.createElement("option");
-        var timeString = time.toString().padStart(2, "0") + ":00:00";
-        option.text = timeString;
-        option.value = timeString;
-        timeDropdown.add(option);
+      // Generate the time dropdown options for the selected date
+      function generateTimeOptions() {
+        // Clear the existing options in the time dropdown
+        timeDropdown.innerHTML = "";
+        // Get the selected date from the date dropdown
+        var selectedDate = new Date($("#dateDropdown").val());
+        // Calculate the start hour and end hour for the selected date
+        var startHour, endHour;
+        if (selectedDate.getDate() == currentDate.getDate()) {
+          // First day
+          var remainder = currentHour % 3;
+          startHour = currentHour - remainder;
+          endHour = 21;
+        } else if (selectedDate.getDate() == currentDate.getDate() + 5) {
+          // Last day
+          startHour = 0;
+          var remainder = currentHour % 3;
+          endHour = currentHour - 3 - remainder;
+        } else {
+          // Middle day
+          startHour = 0;
+          endHour = 21;
+        }
+        // Generate the time dropdown options based on the available hours
+        for (var j = startHour; j <= endHour; j += 3) {
+          var option = document.createElement("option");
+          var timeString = j.toString().padStart(2, "0") + ":00:00";
+          option.text = timeString;
+          option.value = timeString;
+          timeDropdown.add(option);
+        }
       }
-      //finally the station dropdown menu
+
+      // Generate the time dropdown options for the first day by default
+      generateTimeOptions();
+
+      // Attach an event listener to the date dropdown element
+      $('#dateDropdown').on('change', function() {
+        // Generate the time dropdown options for the selected date
+        generateTimeOptions();
+      });
+
+        //finally the station dropdown menu
       var stationDropdown = document.getElementById("stationDropdown");
       //get the station names from the station data
       var station_data= {{ live_station_data | safe }};
+      //sort the station data alphabetically based on station name
+      //this is more user readable
+      station_data.sort(function(a, b) {
+        var A = a.name.toUpperCase(); // ignore upper and lowercase
+        var B = b.name.toUpperCase();
+        if (A < B) {
+          return -1;
+        }
+        if (A > B) {
+          return 1;
+        }
+        // names are equal
+        return 0;
+      });
+
       //get the station numbers
       //loop through the station names and add them to the dropdown menu
       for (var i=0;i<station_data.length;i++){
@@ -511,9 +563,6 @@
 
       
 //Left to do:
-// fix the weather call to get the correct weather information
-// send the X_test data to the correct prediction model
-// do this in app.route predict
 //return the availability percentage here
 //process this and graph it
 //the time is from the next 5 days starting right now
