@@ -69,6 +69,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
       var circles = [];
+      var total_bike_stands_array=[];
       // Map function
       //initialise the map to  Dublin and load as a roadmap
       function initMap(){
@@ -187,11 +188,14 @@
           })
         })
 
-        
         // Generate markers
         for (var i = 0; i < data.length; i++){
           var station = data[i];
-          var dynamic_data = live_station_data[i];
+          var dynamic_data = live_station_data[i]; 
+
+          //extracting the number of bike stands from the dynamic data
+          //in order to show the percent available
+          total_bike_stands_array.push([dynamic_data.number, dynamic_data.bike_stands]);
         
           var marker = new google.maps.Marker({
             position: {lat: station[0], lng: station[1]},
@@ -475,7 +479,7 @@
         if (selectedDate.getDate() == currentDate.getDate()) {
           // First day
           var remainder = currentHour % 3;
-          startHour = currentHour - remainder;
+          startHour = currentHour + (3-remainder);
           endHour = 21;
         } else if (selectedDate.getDate() == currentDate.getDate() + 5) {
           // Last day
@@ -535,39 +539,8 @@
         option.text = stationName+' '+stationNum;
         option.value = stationNum;
         stationDropdown.add(option);
-      }
-      
-      //call the generate predictions function when subit button is clicked
-      //and send to app.py /predict route
-      $(document).on('click', '#predict_button', function(){
-        //call the generate predictions function
-        X_test=generatePredictions();
-        X_test=JSON.stringify(X_test);
-        station_selected = stationDropdown.value;
-        //remove the double quotes
-        station_selected=JSON.stringify(station_selected);
-        station_selected=station_selected.replace(/["]+/g, '');
-        console.log(X_test, station_selected);
-        //Now send X_test to app.py to get the prediction along with the station number
-        $.ajax({
-                    type: "POST",
-                    url: "/predict",
-                    data: { station_selected, X_test },
-                    success: function(response) {
-                      $("#result_text").html(response); // show the result
-                    }
-                });
-      });
-
-      
-
-      
-//Left to do:
-//return the availability percentage here
-//process this and graph it
-//the time is from the next 5 days starting right now
-
-
+      } 
+      //Cian generate predictions function
       function generatePredictions(){
         //make these drop down menus
         var user_pred_station=stationDropdown.value;
@@ -617,6 +590,65 @@
         });
         return X_test
       }
+
+      //call the generate predictions function when subit button is clicked
+      //and send to app.py /predict route
+      //result is the result string
+      var result='';
+      var percent=0;
+      var station_r=0;
+      $(document).on('click', '#predict_button', function(){
+        //call the generate predictions function
+        X_test=generatePredictions();
+        X_test=JSON.stringify(X_test);
+        station_selected = stationDropdown.value;
+        //remove the double quotes
+        station_selected=JSON.stringify(station_selected);
+        station_selected=station_selected.replace(/["]+/g, '');
+        console.log(X_test, station_selected);
+        //Now send X_test to app.py to get the prediction along with the station number
+        $.ajax({
+                    type: "POST",
+                    url: "/predict",
+                    data: { station_selected, X_test },
+                    success: function(response) {
+                      $("#result_text").html(response); // show the result
+                      result=response;
+                      console.log(result);
+                      //Using the station number and bike availability percentage make a graph
+                      //showing the number of bikes available at that station at that time
+                      const regex = /(\d+)% of bikes will be available at station number (\d+) at/;
+                      const match = result.match(regex);
+                      //extracts the percentage and station number from the result string
+                      if (match) {
+                          percent = parseInt(match[1]);
+                          station_r = parseInt(match[2]);
+                          console.log(percent, station_r);
+                      } else {
+                          console.log('No match found');
+                      }
+
+                      //find the number of total bike stands at this station
+                      //find the ncorresponding number in column 1
+                      // find the index of the row that has the given station number in column 0
+                      var rowIndex = total_bike_stands_array.findIndex(row => row[0] === station_r); 
+                      var total_bike_stands=total_bike_stands_array[rowIndex];
+                      var stands=total_bike_stands[1]
+                      console.log('Stands at this station',stands);
+                      var available_bikes_graph= stands*percent/100;
+                      //convert to nearest integer:
+                      available_bikes=Math.round(available_bikes_graph);
+                      console.log('Avaialable Bikes at this station',available_bikes);
+                      //Left to do:
+                      //process this and graph it
+                      // circles toggle the wrong way
+                      //update the data when george gets new weather data
+                    }
+                });
+      });
+
+
+
 
     </script>
     <!-- Googlemap API --> 
