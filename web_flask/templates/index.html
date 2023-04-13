@@ -478,21 +478,21 @@
         var startHour, endHour;
         if (selectedDate.getDate() == currentDate.getDate()) {
           // First day
-          var remainder = currentHour % 3;
-          startHour = currentHour + (3-remainder);
-          endHour = 21;
+          //var remainder = currentHour % 3;
+          startHour = currentHour + 1;//-remainder;
+          endHour = 23;
         } else if (selectedDate.getDate() == currentDate.getDate() + 5) {
           // Last day
           startHour = 0;
-          var remainder = currentHour % 3;
-          endHour = currentHour - 3 - remainder;
+          //var remainder = currentHour % 3;
+          endHour = currentHour - 1 ;//- remainder;
         } else {
           // Middle day
           startHour = 0;
           endHour = 21;
         }
         // Generate the time dropdown options based on the available hours
-        for (var j = startHour; j <= endHour; j += 3) {
+        for (var j = startHour; j <= endHour; j += 1) {
           var option = document.createElement("option");
           var timeString = j.toString().padStart(2, "0") + ":00:00";
           option.text = timeString;
@@ -546,8 +546,19 @@
         var user_pred_station=stationDropdown.value;
         // drop down of next 5 days
         var user_pred_date = dateDropdown.value;
-        //drop down from hours 0,3,6,9,12,15,18,21
-        var user_pred_time = timeDropdown.value;
+        //drop down from hours all hours in the day so map to 3 hour intervals
+        var hour = parseInt(timeDropdown.value.substring(0, 2));
+        if (hour%3==0){
+          var user_pred_time = timeDropdown.value;
+        }
+        else if(hour%3==1){
+          hour=hour-1;
+          var user_pred_time = hour.toString().padStart(2, "0") + ":00:00";
+        }
+        else if(hour%3==2){
+          hour=hour+1;
+          var user_pred_time = hour.toString().padStart(2, "0") + ":00:00";
+        }
         //this value can be used for getting the correct weather data
         var merge_pred_date_time = user_pred_date + ' ' + user_pred_time
 
