@@ -9,6 +9,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from datetime import datetime
 import math
+import os
 
 app = Flask(__name__)
 
@@ -256,8 +257,7 @@ def route():
             # Extract the lat and long of the station with the shortest distance to the start
             # Extract the lat and long of the station with the shortest distance to the end
             # Return the route data incorporating the stations as 'stops'
-
-            
+ 
             def haversine(lat1, lon1, lat2, lon2):
                 # Convert latitude and longitude from degrees to radians
                 lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
@@ -321,48 +321,62 @@ def route():
             print('Error getting route data:', e)
             # Perform Prediction
 
-            #Get the station number from the form
-            station_number = min_start_station
+        #Get the station number from the form
+        station_number_start = min_start_station
+        station_number_end = min_end_station
 
-            if 'X_test' in request.form:
+        if 'X_test' in request.form:
+            try:
+                route_data['prediction'] = {}
+                route_data['prediction']['start'] = station_number_start
+                route_data['prediction']['end'] = station_number_end
                 X_test = request.form['X_test']
-            else:
-                X_test = None
+                #Unstringify the X_test
+                X_test=json.loads(X_test)
 
-            if (X_test):
-                try:
-                    #Unstringify the X_test
-                    X_test=json.loads(X_test)
+                #Load the model for that station
+                model_start_station = os.path.join(app.static_folder, 'models', f'model_{station_number_start}.pkl')
+                with open(model_start_station, 'rb') as handle:
+                    model = pickle.load(handle)
 
-                    #Load the model for that station
-                    model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{station_number}.pkl'
-                    with open(model_number, 'rb') as handle:
-                        model = pickle.load(handle)
+                #X_test is the feature to query:
+                #Should be in the form of: 
+                #Day, hour and it will predict the number of bikes available at that station
+                # up to 5 days in advance
+                #X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
+                #           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
 
-                    #X_test is the feature to query:
-                    #Should be in the form of: 
-                    #Day, hour and it will predict the number of bikes available at that station
-                    # up to 5 days in advance
-                    #X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
-                    #           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
+                #Get the prediction
+                prediction = model.predict(X_test)
+                #Return the prediction
+                #converrt it to a string
+                prediction = np.array2string(prediction)
+                #remove the square brackets
+                prediction = prediction.replace('[', '')
+                prediction = prediction.replace(']', '')
+                prediction = int(prediction)
+                route_data['prediction']['predBikes'] = prediction
 
-                    #Get the prediction
-                    prediction = model.predict(X_test)
-                    #Return the prediction
-                    #converrt it to a string
-                    prediction = np.array2string(prediction)
-                    #remove the square brackets
-                    prediction = prediction.replace('[', '')
-                    prediction = prediction.replace(']', '')
-                    added_info = f"% of bikes will be available at station number {station_number} at {X_test[0][3]}:00."
-                    prediction =prediction+added_info
-                    print('Route and prediction data to be returned:', {route_data, prediction})
-                    return jsonify({route_data, prediction})
-                except Exception as e:
-                    print('Error getting prediction:', e)
-            else:
-                print('Route data to be returned:', route_data)
-                return jsonify(route_data)
+                model_end_station = os.path.join(app.static_folder, 'models', f'model_{station_number_end}.pkl')
+                with open(model_end_station, 'rb') as handle:
+                    model = pickle.load(handle)
+
+                #Repeat for closest end station
+
+                prediction = model.predict(X_test)
+                prediction = np.array2string(prediction)
+                prediction = prediction.replace('[', '')
+                prediction = prediction.replace(']', '')
+                stand_prediction = 100 - int(prediction)
+                route_data['prediction']['predStands'] = stand_prediction
+
+                print('Route and prediction data to be returned:', route_data)
+            except Exception as e:
+                print('Error getting prediction:', e)
+        else:
+            print('Route data to be returned:', route_data)
+            
+        return jsonify(route_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
