@@ -8,22 +8,33 @@
     <header>
       
       <div id="logo">
-        <h1>Dublin Bikes</h1>
+        <h1>Dublin Bikes  <i class="fa-solid fa-person-biking"></i></h1>
       </div>
       <div id="header-right">
         <div id="search">
-          <button id='search_button'>Route Finder &#128269;</button>
+          <button id='search_button'><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
-        <div id="for_circle">
-          <input type="checkbox" id="check_box" name="check_box">
-          <label for="check_box">Markers (🟢🟠🔴)</label> 
-        </div> 
+        
       </div>
     </header>
     <div class="scroll-container">
       <div id='current-weather' class="scroll-content"></div>
     </div>
     <div id="map"></div>
+    <div class = "button-container">
+    <button class="btn active" id="show-bikes"><i class="fa-solid fa-bicycle"></i> Available bikes</button>
+    <button class="btn" id="show-stations"><i class="fa-solid fa-square-parking"></i> Available spaces</button>
+    <button class = "btn" id = "show-circles"><i class="fa-solid fa-circle-notch"></i> Visialize</button>
+    </div>
+    <div class ="scale" id ="scale">
+      <div class ="scale-box">
+      <h3>Available bikes  <i class="fa-solid fa-bicycle"></i> </h3>
+      <p><i class="fa-solid fa-circle-notch" style="color: #43c70a;"></i> > <i class="fa-solid fa-circle-notch" style="color: #c7b70a;"></i> > <i class="fa-solid fa-circle-notch" style="color: #c70a0a;"></i></p>
+      <h3>Available stations  <i class="fa-solid fa-square-parking"></i></h3>
+      <p><i class="fa-solid fa-circle-notch fa-2xl"></i> > <i class="fa-solid fa-circle-notch fa-lg"></i> > <i class="fa-solid fa-circle-notch fa-2xs"></i></p>
+      </div>
+    </div>
+
     <div id="detailed">
     </div>
     <div id="route">
@@ -38,18 +49,140 @@
         <input type="submit" id="route-submit-button" value="Get Route">
       </form>
     </div>
+    <div class ="footer">
+      <h3>Dublin Bikes  <i class="fa-solid fa-person-biking"></i></h3>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://kit.fontawesome.com/e348a6b7c9.js" crossorigin="anonymous"></script>
     <script>
       var circles = [];
+      var markers = [];
       // Map function
       //initialise the map to  Dublin and load as a roadmap
       function initMap(){
+
+        var mapStyle = [
+        {
+            "stylers": [
+                {
+                    "saturation": -100
+                },
+                {
+                    "gamma": 1
+                }
+            ]
+        },
+        {
+            "elementType": "labels.text.stroke",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.business",
+            "elementType": "labels.text",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.business",
+            "elementType": "labels.icon",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.place_of_worship",
+            "elementType": "labels.text",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.place_of_worship",
+            "elementType": "labels.icon",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "water",
+            "stylers": [
+                {
+                    "visibility": "on"
+                },
+                {
+                    "saturation": 50
+                },
+                {
+                    "gamma": 0
+                },
+                {
+                    "hue": "#50a5d1"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.neighborhood",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#333333"
+                }
+            ]
+        },
+        {
+            "featureType": "road.local",
+            "elementType": "labels.text",
+            "stylers": [
+                {
+                    "weight": 0.5
+                },
+                {
+                    "color": "#333333"
+                }
+            ]
+        },
+        {
+            "featureType": "transit.station",
+            "elementType": "labels.icon",
+            "stylers": [
+                {
+                    "gamma": 1
+                },
+                {
+                    "saturation": 50
+                }
+            ]
+        }
+    ];
         var map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 53.3498, lng: -6.2603},
             zoom: 13.5,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
-            language: 'en'
+            language: 'en',
+            styles: mapStyle
           });
 
         var data = {{ data | safe }};
@@ -74,7 +207,7 @@
               }
             });
       
-            map.setCenter(userLocation);
+            
           });
         }
 
@@ -165,14 +298,16 @@
         for (var i = 0; i < data.length; i++){
           var station = data[i];
           var dynamic_data = live_station_data[i];
-        
-          var marker = new google.maps.Marker({
-            position: {lat: station[0], lng: station[1]},
-            map: map
-          });
-
+    
           var bikeavailability = dynamic_data.available_bikes;
           var bikestandsavailability = dynamic_data.available_bike_stands;
+          
+
+          var marker = new google.maps.Marker({
+            position: { lat: station[0], lng: station[1] },
+            map: map,
+                        
+          });
           var circleRadius = 100;
           
         
@@ -184,12 +319,10 @@
             fillOpacity: 0.35,
             map: map,
             center: {lat: station[0], lng: station[1]},
-            radius: circleRadius,
-
-            
+            radius: circleRadius      
           });
           
-          circle.setVisible(false);
+          
           
           if (bikeavailability > 10) {
             circle.setOptions({
@@ -225,12 +358,18 @@
           } 
           
           circles.push(circle);
+          circle.setVisible(false);
+
+          markers.push(marker);
 
           // Added dynamic station data on load instead of calling the API on every hover. Better performance.
           var infowindow = new google.maps.InfoWindow({
-            content: '<h3>' + station[2] + '</h3>' + '<p>Bikes Available: ' + dynamic_data.available_bikes +
-              ' Empty Stands: ' + dynamic_data.available_bike_stands + '</p>' + "<input style='display: none' value='" +
-                station[3] + "' id='station_num'>"
+            content: '<h3>' + station[2] + '</h3>' + '<p><i class="fa-solid fa-bicycle"></i> Available Bikes: ' + dynamic_data.available_bikes +
+              '  <i class="fa-solid fa-square-parking"></i> Available Stands: ' + dynamic_data.available_bike_stands + '</p>' + "<input style='display: none' value='" +
+                station[3] + "' id='station_num'>",
+            options: {
+              className: 'info-window'
+            }
           });
           //open the info window when we hover over the marker
           marker.addListener('mouseover', (function(marker, infowindow){
@@ -244,6 +383,8 @@
                 infowindow.close();
               }
             })(marker, infowindow));
+
+          
 
           marker.addListener('click', (function(marker, infowindow){
             return function() {
@@ -267,25 +408,101 @@
                   }
                 });
               }
-            })(marker, infowindow));            
+            })(marker, infowindow));  
+            
+            document.getElementById("show-bikes").addEventListener("click", function() {
+              for (var j = 0; j < markers.length; j++) {
+                  markers[j].setVisible(true);
+                  circles[j].setVisible(false);
+                  markers[j].setLabel({
+                      text: live_station_data[j].available_bikes.toString(),
+                      color: "#fff",
+                      fontSize: "14px",
+                      fontWeight: "bold",
+                      background: "#007bff"
+                  });
+              }
+              document.getElementById("scale").style.display = "none";
+          });
+      
+          if (document.getElementById("show-bikes").classList.contains("active")){
+            for (var j = 0; j < markers.length; j++) {
+              
+              markers[j].setLabel({
+                  text: live_station_data[j].available_bikes.toString(),
+                  color: "#fff",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  background: "#007bff"
+              });
+          }
+          }
+      
+          document.getElementById("show-stations").addEventListener("click", function() {
+              for (var j = 0; j < markers.length; j++) {
+                
+                  markers[j].setVisible(true);
+                  circles[j].setVisible(false);
+                  markers[j].setLabel({
+                      text: live_station_data[j].available_bike_stands.toString(),
+                      color: "#fff",
+                      fontSize: "14px",
+                      fontWeight: "bold",
+                      background: "#007bff"
+                  });
+              }
+              document.getElementById("scale").style.display = "none";
+          });
+          
+          
+            
         }
         
 
       }
+      
+      document.getElementById("scale").style.display = "none";
 
-      function toggleCircles(){
+      document.getElementById('show-circles').addEventListener("click", function() {
         for (var i = 0; i < circles.length; i++) {
-          var circle = circles[i];
-          if (circle.getVisible()) {
-            circle.setVisible(false); 
-          } else {
-            circle.setVisible(true); 
-          }
+            circles[i].setVisible(true);
+            markers[i].setVisible(false);
         }
+
+            document.getElementById("scale").style.display = "block";
+    }); 
+    
+        
+
+      var buttons = document.getElementsByClassName('btn');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('mouseover', function() {
+          this.style.opacity = '0.7';
+        });
+
+        buttons[i].addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+        });
+
+        buttons[i].addEventListener('click', function(event) {
+          var clickedButton = event.target; 
+          if (clickedButton.id === 'show-bikes') { 
+            clickedButton.classList.add('active');
+          } else {
+            clickedButton.classList.remove('active');
+          }
+          for (var j = 0; j < buttons.length; j++) {
+            buttons[j].classList.remove('active');
+            
+          }
+          clickedButton.classList.add('active');
+          
+        });
       }
 
-      var check = document.getElementById('check_box');
-      check.addEventListener('click', toggleCircles);
+
+
+      
 
   
       // George - Open and close side display
@@ -346,27 +563,48 @@
         const currentDay = getDay();
 
         availabilityBikeChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: `Average Available Bikes per Hour (${currentDay})`,
-                    data: dataset,
-                    backgroundColor: 'rgba(20, 64, 105)',
-                    borderColor: 'rgba(20, 64, 105)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+          type: 'bar',
+          data: {
+              labels: labels,
+              datasets: [{
+                  label: `Average Available Bikes per Hour (${currentDay})`,
+                  data: dataset,
+                  backgroundColor: 'rgba(242, 242, 242)',
+                  borderColor: 'rgba(242, 242, 242)',
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              responsive: true, 
+              maintainAspectRatio: false, 
+              scales: {
+                  x: {
+                      ticks: {
+                          color: '#f2f2f2'
+                      }
+                  },
+                  y: {
+                      ticks: {
+                          color: '#f2f2f2' 
+                      },
+                      beginAtZero: true 
+                  }
+              },
+              plugins: {
+                  legend: {
+                      labels: {
+                          
+                              color: '#f2f2f2' 
+                          }
+                      }
+                  
+              }
+          }
+      });
+      
+      
       }
-
+      
       function getDay(){
         const today = new Date();
         const options = { weekday: 'long' };
@@ -386,20 +624,82 @@
                 datasets: [{
                     label: `Average Available Stands per Hour (${currentDay})`,
                     data: dataset,
-                    backgroundColor: 'rgba(20, 64, 105)',
-                    borderColor: 'rgba(20, 64, 105)',
+                    backgroundColor: 'rgba(242, 242, 242)',
+                    borderColor: 'rgba(242, 242, 242)',
                     borderWidth: 1
                 }]
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
+              responsive: true, 
+              maintainAspectRatio: false, 
+              
+              scales: {
+                  x: {
+                      ticks: {
+                          color: '#f2f2f2'
+                      }
+                  },
+                  y: {
+                      ticks: {
+                          color: '#f2f2f2' 
+                      },
+                      beginAtZero: true 
+                  }
+              },
+              plugins: {
+                  legend: {
+                      labels: {
+                          
+                              color: '#f2f2f2' 
+                          }
+                      }
+                  
+              }
+          }
         });
       }
+      $(document).ready(function() {
+        $('#occupancy_chart').css('display', 'none');
+      });
+      
+
+      $(document).ready(function() {
+        $('#occupancy_chart').attr('style','display:none;');
+        function showAvailabilityChart() {
+            $('#occupancy_chart').hide();
+            $('#availability_chart').show();
+        }
+    
+        function showOccupancyChart() {
+            $('#occupancy_chart').show();
+            $('#availability_chart').hide();
+        }
+        
+        showAvailabilityChart();
+    
+        $(document).on('click', '#show-bikechart', function(){
+            showAvailabilityChart();
+        });
+    
+        $(document).on('click', '#show-stationchart', function(){
+            showOccupancyChart();
+        });
+    
+        var chart_buttons = $('.chart-btn');
+        $(document).on('click', '.chart-btn', function(event) {
+            var clickedButton = $(event.target);
+            $('.chart-btn').removeClass('active');
+            clickedButton.addClass('active');
+        });
+    });
+    
+      
+      
+      
+      
+
+      
+
 
       currentWeather(current_weather);
 

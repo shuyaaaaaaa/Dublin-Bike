@@ -1,8 +1,11 @@
 /* This is the css file for our dublin bikes web app*/
 body {
-    background-color: #144069;
+    background-color:#282525;
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
 }
 
 header{
@@ -10,6 +13,7 @@ header{
     align-items: center;
     justify-content:space-between;
     padding: 1rem;
+    height: 8%;
 }
 
 #header-right{
@@ -18,7 +22,8 @@ header{
 }
 
 #logo{
-    color: white;
+    color:#f2f2f2;
+    position:relative;
 }
 
 .scroll-container {
@@ -27,21 +32,14 @@ header{
     width: 100%;
     height: auto;
     overflow: hidden;
-    background-color: #6486a7;
+    background-color: darkgray;
     white-space: nowrap;
   }
 
-#for_circle{
-    background-color: #144069;
-    color: #f2f2f2;
-    z-index: 9999;
-    size: 100px;
-    border-radius: 15px;
-    padding-right: 5px;
-}
+
   
 .scroll-content {
-color: #144069;
+color:#f2f2f2;
 font-weight: bold;
 animation-name: move;
 animation-duration: 40s;
@@ -79,25 +77,30 @@ animation-timing-function: linear;
 }
 
 #search_button{
-    background-color: #144069;
-    color: #f2f2f2;
+    
+    background-color:#282525;
     font-weight: bold;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
+    color: #f2f2f2;
 }
 
 #route{
     position: fixed;
     top: 0;
-    left: -400px;
+    left: -410px;
     width: 400px;
     height: 100%;
-    background-color: #f2f2f2;
+    background-color:#282525;
     transition: left 0.5s;
-    color:#282525;
+    color:#f2f2f2;
     display: flex;
     flex-direction: column;
+    border-color: #f2f2f2;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 15px;
 }
 
 #route.show{
@@ -112,18 +115,31 @@ animation-timing-function: linear;
 #detailed {
     position: fixed;
     top: 0;
-    left: -400px;
+    left: -410px;
     width: 400px;
     height: 100%;
-    background-color: #f2f2f2;
+    background-color:#282525;
     transition: left 0.5s;
-    color:#282525;
+    color:#f2f2f2;
     display: flex;
     flex-direction: column;
+    border-color: #f2f2f2;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 15px;
 }
 
 #detailed.show{
     left: 0;
+}
+
+.detailed_name{
+    border-color: #f2f2f2;
+    border-radius: 15px;
+    text-align: center;
+    border-style: solid; 
+    border-width: 3px;
+    margin-bottom: 8%;
 }
 
 #detailed_info{
@@ -152,29 +168,35 @@ animation-timing-function: linear;
 }
 
 .block_green{
-    background-color: #197c1d;
+    background-color: red;
     color:#f2f2f2;
     padding: 20px;
     border-radius: 15px;
 }
 
 .info_block{
-    background-color: #144069;
+    background-color:#f2f2f2;
     width: 100%;
-    color:#f2f2f2;
+    color:#282525;
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 5px 3px 3px #6486a7;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 button.close-button{
-    background-color: #6486a7;
+    background-color:#282525;
     border: none;
-    padding: 5px 7px 5px 7px;
+    padding: 5px 5px 5px 5px;
     color: #f2f2f2;
     font-weight: bold;
     float: right;
     cursor: pointer;
+    font-size: 300%;
+}
+
+button.close-button:hover{
+    opacity: 0.7;
+    
 }
 
 #route_request{
@@ -203,17 +225,171 @@ button.close-button{
 }
 
 #route_request #route-submit-button{
-    background-color: #144069;
+    background-color:#f2f2f2;
     border: none;
     padding: 10px;
     height: 20%;
     border-radius: 5px;
-    color: #f2f2f2;
+    color:#282525;
     font-weight: bold;
     cursor: pointer;
 }
 
 #route_request #route-submit-button:hover{
-    background-color: #6486a7;
+    background-color:darkgray;
 }
 
+
+.button-container {
+    position: relative;
+    bottom: 70%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    background-color:#f2f2f2;
+    border-radius: 5%; 
+    padding: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    width: 35%;
+  }
+  
+  
+  .btn {
+    
+    color: black;
+    background-color:#f2f2f2;
+    border: none;
+    border-radius: 5%;
+    cursor: pointer;
+    opacity: 1; 
+    padding: 10px;
+    font-size: 20px;;
+     
+    
+  }
+  
+  
+  .btn:hover {
+    opacity: 1; 
+  }
+  
+
+  .btn.active {
+    background-color: darkgray; 
+    color:#f2f2f2;
+  }
+  
+
+  .btn.chosen {
+    background-color: darkgray; 
+    color:#f2f2f2;
+  }
+  
+  .scale {
+    background-color:#f2f2f2;
+    position: relative;
+    width: 20%;
+    height: 20%;
+    bottom: 73%;
+    left: 75%;
+    border-radius: 5%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    
+  }
+
+  .scale-box{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2%;
+    width: 70%;
+  }
+
+  .footer{
+    color: white;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom:1%;
+  }
+  
+  #occupancy_chart .chartjs-plugin-datalabels label {
+    color: #f2f2f2; 
+}
+
+.chart-buttons {
+    position: absolute;
+    bottom: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    background-color:#f2f2f2;
+    border-radius: 5%; 
+    padding: 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    
+  }
+
+  #show-stationchart{
+    right: 10px;
+  }
+
+  .chart-btn {
+    font-size: 100%;
+    color: black;
+    background-color:#f2f2f2;
+    border: none;
+    border-radius: 5%;
+    cursor: pointer;
+    opacity: 1; 
+    padding: 10px;
+    margin: 0;
+    display: inline-block;
+    
+        
+    
+  }
+
+  .chart-btn:hover {
+    opacity: 0.8; 
+  }
+  
+  #show-stationchart{
+    
+    float: right;
+  }
+  .chart-btn.active {
+    background-color:#282525; 
+    color:#f2f2f2;
+  }
+
+  #availability_chart{
+    position: absolute;
+    top: 25%;
+    height: 70%;
+    left:7%;
+    
+  }
+
+  #occupancy_chart{
+    position: absolute;
+    bottom: 5%;
+    height: 70%;
+    left:7%;
+    
+  }
+  
+  
+.charts{
+    border-color: #f2f2f2;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 15px;
+    padding: 10px;
+    position: relative;
+    margin-top: 30px;
+    height: 80%;
+}
+  
