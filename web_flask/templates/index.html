@@ -10,36 +10,9 @@
       <div id="logo">
         <h1>Dublin Bikes</h1>
       </div>
-      <div id="predictions">
-          <button id='plan_journey_button'>Plan Journey</button>
-          <div id="pred_content">
-            <!--Button for Date-->
-            <button class="datebtn">Enter the Date of your Journey:</button>
-            <select id="dateDropdown">
-              <!-- Placeholder -->
-              <option value="" disabled selected>Select a date</option>
-            </select>
-            <!--Button for Time-->
-            <button class="timebtn">Enter the Time of your Journey (Hour):</button>
-            <select id="timeDropdown">
-              <!-- Placeholder -->
-              <option value="" disabled selected>Select a time (hour)</option>
-            </select>
-            <!--Button for Station-->
-            <button class="timebtn">Enter the Station you need for your Journey:</button>
-            <select id="stationDropdown">
-              <!-- Placeholder -->
-              <option value="" disabled selected>Select a station</option>
-            </select>
-            <button id='predict_button'>Predict</button>
-            <div id="result">
-              <p id="result_text"></p>
-            </div>
-          </div>
-      </div>
       <div id="header-right">
         <div id="search">
-          <button id='search_button'>Route Finder &#128269;</button>
+          <button id='search_button'>Plan Route</button>
         </div>
         <div id="for_circle">
           <input type="checkbox" id="check_box" name="check_box">
@@ -56,14 +29,36 @@
     <div id="route">
       <button id='route-close-button' class="close-button">&times;</button>
       <form action="/route" id='route_request' method="POST">
-        <label>Start:</label>
+        <label for="start">Start:</label>
         <input type="text" id ='start' name="start">
         <br>
-        <label>End:</label>
+        <label for="end">End:</label>
         <input type="text" id ='end' name="end">
         <br>
+        <div class="flex-row">
+          <label for="plan_journey_button">Plan future route:</label>
+          <input type="checkbox" id="plan_journey_button" name="plan_journey_button">
+        </div>
+        <div id="pred_content">
+          <!--Button for Date-->
+          <label for="dateDropdown" class="datebtn">Enter the Date of your Journey:</label>
+          <select id="dateDropdown">
+            <!-- Placeholder -->
+            <option value="" disabled selected>Select a date</option>
+          </select>
+          <!--Button for Time-->
+          <label for="timeDropdown" class="timebtn">Enter the Time of your Journey (Hour):</label>
+          <select id="timeDropdown">
+            <!-- Placeholder -->
+            <option value="" disabled selected>Select a time (hour)</option>
+          </select>
+        </div>
         <input type="submit" id="route-submit-button" value="Get Route">
       </form>
+      <div>
+        <p id="result-text"></p>
+      </div>
+    </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -105,6 +100,7 @@
             map.setCenter(userLocation);
           });
         }
+          
 
         // Route Function-Cian
         // Use AJAX to catch route form submission and then update the map with the response.
@@ -112,32 +108,110 @@
           $('#route_request').submit(function(event){
             //prevent the form from submitting until the data is added
             event.preventDefault();
+
+            var sendData;
+
             var formData = {
               //adding ', Dublin' to the end of the input address to ensure that the geocoder returns the correct location
               start: $('#start').val()+', Dublin',
               end: $('#end').val()+', Dublin'
             }
+            
+            // Prediction Section ----------------------------------------------------------------
+
+            //call the generate predictions function when subit button is clicked
+            //and send to app.py /predict route
+            //result is the result string
+            var result='';
+            var percent=0;
+            var station_r=0;
+
+            //call the generate predictions function
+            const dateDropdown = document.getElementById('dateDropdown');
+            const dateDropdownSelected = dateDropdown.value;
+
+            if(dateDropdownSelected){
+              X_test=generatePredictions();
+              X_test=JSON.stringify(X_test);
+              console.log('X Test Data to be sent:', X_test);
+              sendData = {start: formData.start, end: formData.end, X_test: JSON.stringify(X_test)}
+              console.log('Date dropdown selected. Data to be sent = '. sendData)
+            } else{
+              sendData = {start: formData.start, end: formData.end}
+              console.log('No date selected. Data to be sent = ', sendData)
+            }
+
+            //Now send X_test to app.py to get the prediction along with the station number
+
             $.ajax({
               type: "POST",
               url: '/route',
-              data: formData ,
+              data: sendData,
               success: function(response){
-                console.log('Returned route received:', response)
+                // show the result
+                $("#result-text").html(response.prediction);
+                result=response.prediction;
+                console.log('Prediction result:', result);
+
+                //Using the station number and bike availability percentage make a graph
+                //showing the number of bikes available at that station at that time
+                const regex = /(\d+)% of bikes will be available at station number (\d+) at/;
+                const match = result.match(regex);
+                //extracts the percentage and station number from the result string
+                if (match) {
+                    percent = parseInt(match[1]);
+                    station_r = parseInt(match[2]);
+                    console.log(percent, station_r);
+                } else {
+                    console.log('No match found');
+                }
+
+                //find the number of total bike stands at this station
+                //find the ncorresponding number in column 1
+                // find the index of the row that has the given station number in column 0
+                var rowIndex = total_bike_stands_array.findIndex(row => row[0] === station_r); 
+                var total_bike_stands=total_bike_stands_array[rowIndex];
+                var stands=total_bike_stands[1]
+                console.log('Stands at this station',stands);
+                var available_bikes_graph= stands*percent/100;
+                //convert to nearest integer:
+                available_bikes=Math.round(available_bikes_graph);
+                console.log('Avaialable Bikes at this station',available_bikes);
+                //Left to do:
+                //process this and graph it
+                //make css look better
+                // circles toggle the wrong way
+                //update the data when george gets new weather data
+
+                console.log('Returned route received:', response.route_data)
+                var response = response.route_data;
+                console.log('Response variable:'. response)
                 var start_lat = response.start_lat
                 var start_lng = response.start_lng
+                var start_station_lat = response.start_station_lat
+                var start_station_long = response.start_station_long
+                var end_station_lat = response.end_station_lat
+                var end_station_long = response. end_station_long
                 var end_lat = response.end_lat
                 var end_lng = response.end_lng
 
                 //create the start and end points
                 var start = new google.maps.LatLng(start_lat, start_lng);
+                var start_station = new google.maps.LatLng(start_station_lat, start_station_long)
+                var end_station = new google.maps.LatLng(end_station_lat, end_station_long)
                 var end = new google.maps.LatLng(end_lat, end_lng);
                 //create the places service to confine the search to within xkm of the centre of dublin
 
               //create the directions service which gets the route.
               var directionsService = new google.maps.DirectionsService();
+              
+              var waypoints = [{location: start_station,stopover: true},{location: end_station,stopover: true}];
+
               directionsService.route({
                 origin: start,
                 destination: end,
+                waypoints: waypoints,
+                optimizeWaypoints: false,
                 travelMode: 'BICYCLING'//as we are making a bike application
               }, function(response, status) {
                 if (status === 'OK') {
@@ -173,6 +247,26 @@
                     map: map,
                     title: null
                   });
+                  
+                  // Define custom icon for waypoints
+                  var waypointIcon = {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 7,
+                    fillColor: '#66ff66',
+                    fillOpacity: 1,
+                    strokeWeight: 1,
+                    strokeColor: '#000000'
+                  };
+
+                  // Create marker for waypoints
+                  waypoints.forEach(function(waypoint){
+                    var marker_waypoints = new google.maps.Marker({
+                    position: waypoint.location,
+                    map: map,
+                    icon: waypointIcon
+                  });
+                  })
+                  s
                   //when you click the end marker you see the travel time
                   marker_end.addListener('click', function() {
                   infowindow.open(map, marker_end);
@@ -509,41 +603,9 @@
         // Generate the time dropdown options for the selected date
         generateTimeOptions();
       });
-
-        //finally the station dropdown menu
-      var stationDropdown = document.getElementById("stationDropdown");
-      //get the station names from the station data
-      var station_data= {{ live_station_data | safe }};
-      //sort the station data alphabetically based on station name
-      //this is more user readable
-      station_data.sort(function(a, b) {
-        var A = a.name.toUpperCase(); // ignore upper and lowercase
-        var B = b.name.toUpperCase();
-        if (A < B) {
-          return -1;
-        }
-        if (A > B) {
-          return 1;
-        }
-        // names are equal
-        return 0;
-      });
-
-      //get the station numbers
-      //loop through the station names and add them to the dropdown menu
-      for (var i=0;i<station_data.length;i++){
-        var option = document.createElement("option");
-        var stat=station_data[i]
-        var stationNum = stat.number;
-        var stationName=stat.name;
-        option.text = stationName+' '+stationNum;
-        option.value = stationNum;
-        stationDropdown.add(option);
-      } 
+      
       //Cian generate predictions function
       function generatePredictions(){
-        //make these drop down menus
-        var user_pred_station=stationDropdown.value;
         // drop down of next 5 days
         var user_pred_date = dateDropdown.value;
         //drop down from hours 0,3,6,9,12,15,18,21
@@ -554,6 +616,7 @@
         //Cian - weather forecast function
         var forecast_weather= {{ forecast_weather | safe }};
         //conole.log(forecast_weather.list)
+
         function forecastWeather(forecast_weather){
           //find the correct weather data for the date and time the user has selected
           for (var i=0; i<forecast_weather.list.length; i++){
@@ -561,8 +624,8 @@
             console.log(merge_pred_date_time)
             var dateStr = forecast_weather.list[i].dt_txt
             if( dateStr == merge_pred_date_time){
+
               //extract temperature, wind speed and rain
-             
               var f_temp = forecast_weather.list[i].main.temp;
               var f_wind_speed = forecast_weather.list[i].wind.speed
               // check is rain is present, if it is then extract rain val,
@@ -590,67 +653,6 @@
         });
         return X_test
       }
-
-      //call the generate predictions function when subit button is clicked
-      //and send to app.py /predict route
-      //result is the result string
-      var result='';
-      var percent=0;
-      var station_r=0;
-      $(document).on('click', '#predict_button', function(){
-        //call the generate predictions function
-        X_test=generatePredictions();
-        X_test=JSON.stringify(X_test);
-        station_selected = stationDropdown.value;
-        //remove the double quotes
-        station_selected=JSON.stringify(station_selected);
-        station_selected=station_selected.replace(/["]+/g, '');
-        console.log(X_test, station_selected);
-        //Now send X_test to app.py to get the prediction along with the station number
-        $.ajax({
-                    type: "POST",
-                    url: "/predict",
-                    data: { station_selected, X_test },
-                    success: function(response) {
-                      $("#result_text").html(response); // show the result
-                      result=response;
-                      console.log(result);
-                      //Using the station number and bike availability percentage make a graph
-                      //showing the number of bikes available at that station at that time
-                      const regex = /(\d+)% of bikes will be available at station number (\d+) at/;
-                      const match = result.match(regex);
-                      //extracts the percentage and station number from the result string
-                      if (match) {
-                          percent = parseInt(match[1]);
-                          station_r = parseInt(match[2]);
-                          console.log(percent, station_r);
-                      } else {
-                          console.log('No match found');
-                      }
-
-                      //find the number of total bike stands at this station
-                      //find the ncorresponding number in column 1
-                      // find the index of the row that has the given station number in column 0
-                      var rowIndex = total_bike_stands_array.findIndex(row => row[0] === station_r); 
-                      var total_bike_stands=total_bike_stands_array[rowIndex];
-                      var stands=total_bike_stands[1]
-                      console.log('Stands at this station',stands);
-                      var available_bikes_graph= stands*percent/100;
-                      //convert to nearest integer:
-                      available_bikes=Math.round(available_bikes_graph);
-                      console.log('Avaialable Bikes at this station',available_bikes);
-                      //Left to do:
-                      //process this and graph it
-                      //make css look better
-                      // circles toggle the wrong way
-                      //update the data when george gets new weather data
-                    }
-                });
-      });
-
-
-
-
     </script>
     <!-- Googlemap API --> 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3NV_XtqrUxY3YWqZfs1W7pL8EMM4xeoY&language=en&callback=initMap&libraries=places"></script>

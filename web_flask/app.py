@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from datetime import datetime
+import math
 
 app = Flask(__name__)
 
@@ -215,70 +216,153 @@ def detailed():
 def route():
     # -------- Cian Route Code ----------
     if request.method == 'POST':
-        # Get the start and end locations from the form
-        start = request.form['start']
-        end = request.form['end']
-        # Get the latitude and longitude of the start and end locations
-        #by using the Google Maps Geocoding API
-        apiKey='AIzaSyANu9D6AUdAajvwdweM-tkgx6CX1J9NdvQ'
-        url_start = f'https://maps.googleapis.com/maps/api/geocode/json?address={start}&key={apiKey}'
-        url_end = f'https://maps.googleapis.com/maps/api/geocode/json?address={end}&key={apiKey}'
-        #parse the urls
-        response_start = requests.get(url_start).json()
-        response_end = requests.get(url_end).json()
-        #get the lat and lng from the json data
-        # store variables and values in a dictionary and return the dictionary. We can then extract the values in JavaScript.
-        route_data = {
-            'start_lat': response_start['results'][0]['geometry']['location']['lat'],
-            'start_lng': response_start['results'][0]['geometry']['location']['lng'],
-            'end_lat': response_end['results'][0]['geometry']['location']['lat'],
-            'end_lng': response_end['results'][0]['geometry']['location']['lng']
-        }
+        try:
+            # Connect to the database & select static bike information
+            conn = mysql.connector.connect(
+                host=login.dbHost,
+                user=login.dbUser,
+                password=login.dbPassword,
+                database=login.dbDatabase
+            )
+            cursor = conn.cursor()
+            cursor.execute('SELECT position_lat, position_lng, name, number FROM static')
+            data = cursor.fetchall()
+        except Exception as e:
+            print('Error connecting to database:', e)
 
-        print('Route data to be returned:', route_data)
+        try:
+            # Get the start and end locations from the form
+            start = request.form['start']
+            end = request.form['end']
+            # Get the latitude and longitude of the start and end locations
+            #by using the Google Maps Geocoding API
+            apiKey='AIzaSyANu9D6AUdAajvwdweM-tkgx6CX1J9NdvQ'
+            url_start = f'https://maps.googleapis.com/maps/api/geocode/json?address={start}&key={apiKey}'
+            url_end = f'https://maps.googleapis.com/maps/api/geocode/json?address={end}&key={apiKey}'
+            #parse the urls
+            response_start = requests.get(url_start).json()
+            response_end = requests.get(url_end).json()
+            #get the lat and lng from the json data
+            # store variables and values in a dictionary and return the dictionary. We can then extract the values in JavaScript.
 
-        return jsonify(route_data)
+            response_start_lat = response_start['results'][0]['geometry']['location']['lat']
+            response_start_long = response_start['results'][0]['geometry']['location']['lng']
+            response_end_lat = response_end['results'][0]['geometry']['location']['lat']
+            response_end_long = response_end['results'][0]['geometry']['location']['lng']
 
+            # Identify closest station to start and end and return updated route data with 'stops'
+            # calculate the distance from the start point to each station - store in a dictionary
+            # calculate the distance from the end point to each station - store in a dictionary
+            # Extract the lat and long of the station with the shortest distance to the start
+            # Extract the lat and long of the station with the shortest distance to the end
+            # Return the route data incorporating the stations as 'stops'
 
-#Get the prediction for this station:
-# Loading pickle file
-# de-serialize model.pkl file into an object called model using pickle
-##feed in desired station number
-#Need to get the station number for the desired station and store it in:
-@app.route('/predict', methods=['GET', 'POST'])
-def predict():
-    if request.method == 'POST':
-        #Get the station number from the form
-        station_number = request.form['station_selected']
-        #unstringify the station number
-        station_number = int(station_number)
-        X_test = request.form['X_test']
-        #Unstringify the X_test
-        X_test=json.loads(X_test)
-        #Load the model for that station
-        model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{station_number}.pkl'
-        with open(model_number, 'rb') as handle:
-            model = pickle.load(handle)
+            
+            def haversine(lat1, lon1, lat2, lon2):
+                # Convert latitude and longitude from degrees to radians
+                lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+                # Haversine formula
+                dlat = lat2 - lat1
+                dlon = lon2 - lon1
+                a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+                c = 2 * math.asin(math.sqrt(a))
+                # Radius of the Earth in kilometers (use 3956 for miles)
+                R = 6371
+                # Calculate the distance
+                distance = R * c
+                return distance
+            
+            station_distances = {}
 
-        #X_test is the feature to query:
-        #Should be in the form of: 
-        #Day, hour and it will predict the number of bikes available at that station
-        # up to 5 days in advance
-        #X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
-        #           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
+            for row in data:
+                row_lat = row[0]
+                row_long = row[1]
+                station_num = row[3]  
+                distance_start = haversine(response_start_lat, response_start_long, row_lat, row_long)
+                distance_end = haversine(response_end_lat, response_end_long, row_lat, row_long)
+                station_distances[station_num] = {'Distance Start': distance_start, 'Distance End': distance_end}
+            
+            min_distance_start = float('inf')
+            min_distance_end = float('inf')
+            min_start_station = None
+            min_end_station = None
 
-        #Get the prediction
-        prediction = model.predict(X_test)
-        #Return the prediction
-        #converrt it to a string
-        prediction = np.array2string(prediction)
-        #remove the square brackets
-        prediction = prediction.replace('[', '')
-        prediction = prediction.replace(']', '')
-        added_info = f"% of bikes will be available at station number {station_number} at {X_test[0][3]}:00."
-        prediction =prediction+added_info
-        return prediction
+            for station_num, distances in station_distances.items():
+                if distances['Distance Start'] < min_distance_start:
+                    min_distance_start = distances['Distance Start']
+                    min_start_station = station_num
 
+                if distances['Distance End'] < min_distance_end:
+                    min_distance_end = distances['Distance End']
+                    min_end_station = station_num
+            
+            for row in data:
+                if row[3] == min_start_station:
+                    min_start_station_lat = row[0]
+                    min_start_station_long = row[1]
+                if row[3] == min_end_station:
+                    min_end_station_lat = row[0]
+                    min_end_station_long = row[1]
+
+            print(f"The closest station to the start point is station {min_start_station} with a distance of {min_distance_start:.2f} kilometers.")
+            print(f"The closest station to the end point is station {min_end_station} with a distance of {min_distance_end:.2f} kilometers.")
+
+            route_data = {
+                'start_lat': response_start_lat,
+                'start_lng': response_start_long,
+                'start_station_lat': min_start_station_lat,
+                'start_station_long': min_start_station_long,
+                'end_station_lat': min_end_station_lat,
+                'end_station_long': min_end_station_long,
+                'end_lat': response_end_lat,
+                'end_lng': response_end_long
+            }
+        except Exception as e:
+            print('Error getting route data:', e)
+            # Perform Prediction
+
+            #Get the station number from the form
+            station_number = min_start_station
+
+            if 'X_test' in request.form:
+                X_test = request.form['X_test']
+            else:
+                X_test = None
+
+            if (X_test):
+                try:
+                    #Unstringify the X_test
+                    X_test=json.loads(X_test)
+
+                    #Load the model for that station
+                    model_number = f'/home/cian/Documents/GitHub/dublinbikes/datamodel/models/model_{station_number}.pkl'
+                    with open(model_number, 'rb') as handle:
+                        model = pickle.load(handle)
+
+                    #X_test is the feature to query:
+                    #Should be in the form of: 
+                    #Day, hour and it will predict the number of bikes available at that station
+                    # up to 5 days in advance
+                    #X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
+                    #           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
+
+                    #Get the prediction
+                    prediction = model.predict(X_test)
+                    #Return the prediction
+                    #converrt it to a string
+                    prediction = np.array2string(prediction)
+                    #remove the square brackets
+                    prediction = prediction.replace('[', '')
+                    prediction = prediction.replace(']', '')
+                    added_info = f"% of bikes will be available at station number {station_number} at {X_test[0][3]}:00."
+                    prediction =prediction+added_info
+                    print('Route and prediction data to be returned:', {route_data, prediction})
+                    return jsonify({route_data, prediction})
+                except Exception as e:
+                    print('Error getting prediction:', e)
+            else:
+                print('Route data to be returned:', route_data)
+                return jsonify(route_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
