@@ -275,7 +275,7 @@ def predict():
         #remove the square brackets
         prediction = prediction.replace('[', '')
         prediction = prediction.replace(']', '')
-        added_info = f"% of bikes will be available at station number {station_number} at {X_test[0][3]}:00."
+        added_info = f"% of bikes will be available at station number {station_number} at your selected time."
         prediction =prediction+added_info
         return prediction
 
