@@ -295,7 +295,7 @@ button.close-button{
     padding: 20px;
     width: 75%;
     margin: 0 auto;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 .pred-container.show{
@@ -389,3 +389,36 @@ button.close-button{
   .selected{
     color: #20a9c2;
   }
+
+  #directions-info{
+    background-color: #282525;
+  }
+
+  .adp, .adp table{
+    color: #f2f2f2 !important;
+    padding: 10px;
+  }
+
+  .adp-stepicon{
+    background-color: #20a9c2 !important;
+  }
+
+  .adp-placemark{
+    padding: 10px;
+    background-color: #282525 !important;
+    border: 2px solid #20a9c2 !important;
+  }
+
+  .warnbox-content{
+    background: #20a9c2 !important;
+  }
+
+  .warnbox-c1, .warnbox-c2{
+    background: #20a9c2 !important;
+  }
+
+  .directions-container{
+    margin-top:25px;
+  }
+
+  

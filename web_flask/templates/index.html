@@ -81,6 +81,9 @@
           </div>
         </div>
       </div>
+      <div class="flex-column directions-container">
+        <div id="directions-info"></div>
+      </div>
     </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -146,6 +149,7 @@
               $('#end').val('');
               $('#dateDropdown').val('');
               $('#timeDropdown').val('');
+              $('#directions-info').html('');
 
               // Hide the prediction container
               $('.pred-container').removeClass('show');
@@ -285,6 +289,19 @@
 
                     var waypoints = [{location: start_station,stopover: true},{location: end_station,stopover: true}];
 
+                    directionsDisplay = new google.maps.DirectionsRenderer({
+                        polylineOptions: {
+                          strokeColor: "red",
+                          strokeOpacity: 0.7,
+                          strokeWeight: 4,
+                        },
+                        suppressMarkers: true, // suppress default markers
+                      });
+
+                    // Set the panel for displaying directions
+                    var directionsPanel = document.getElementById("directions-info");
+                    directionsDisplay.setPanel(directionsPanel);
+
                     directionsService.route({
                     origin: start,
                     destination: end,
@@ -295,31 +312,40 @@
 
                     if (status === 'OK') {
                       console.log('Status for directions service is "OK": mapping route.')
-                      //display the route on the map
-                      directionsDisplay = new google.maps.DirectionsRenderer({
-                        map: map,
-                        //make the line red because it is cooler than blue
-                        polylineOptions: {
-                        strokeColor: "red",
-                        strokeOpacity: 0.7,
-                        strokeWeight: 4
-                        },
-                        suppressMarkers: true // suppress default markers
-                      });
-                      directionsDisplay.setDirections(response);
+
                       //read out the duration of the route
                       var route = response.routes[0];
                       var duration = route.legs[0].duration.text;
+
+                      directionsDisplay.setMap(map);
+                      directionsDisplay.setDirections(response);
+
+                      var steps = route.legs[0].steps;
+                      var directionsList = document.createElement("ol");
+                      directionsList.className = "directions-list";
+                      for (var i = 0; i < steps.length; i++) {
+                        var step = steps[i];
+                        var listItem = document.createElement("li");
+                        var distanceSpan = document.createElement("span");
+                        distanceSpan.className = "step-distance";
+                        distanceSpan.innerHTML = " (" + step.distance.text + ")";
+                        listItem.innerHTML = step.instructions;
+                        listItem.appendChild(distanceSpan);
+                      }
+                      directionsPanel.appendChild(directionsList);
+
                       //display this info
                       var infowindow = new google.maps.InfoWindow({
                         content: duration
                       });
+
                       //creating the end marker to display the trip duration
                       marker_end = new google.maps.Marker({
                         position: end,
                         map: map,
                         title: duration
                       });
+
                       //creating the start marker
                       marker_start = new google.maps.Marker({
                         position: start,
@@ -338,7 +364,6 @@
                       };
 
                       // Create marker for waypoints
-              
                       waypoints.forEach(function(waypoint){
                         var waypoint_marker = new google.maps.Marker({
                           position: waypoint.location,
