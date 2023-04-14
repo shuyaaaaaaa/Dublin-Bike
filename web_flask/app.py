@@ -386,5 +386,43 @@ def route():
             
         return jsonify(route_data)
 
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
+    if request.method == 'POST':
+        #Get the station number from the form
+        station_number = request.form['station_selected']
+        #unstringify the station number
+        station_number = int(station_number)
+        X_test = request.form['X_test']
+        #Unstringify the X_test
+        X_test=json.loads(X_test)
+        #Load the model for that station
+        model_start_station = os.path.join(app.static_folder, 'models', f'model_{station_number}.pkl')
+        with open(model_start_station, 'rb') as handle:
+            model = pickle.load(handle)
+
+        #X_test is the feature to query:
+        #Should be in the form of: 
+        #Day, hour and it will predict the number of bikes available at that station
+        # up to 5 days in advance
+        #X_test=[['temperature', 'wind_speed', 'rain', 'hour','Sunday','Monday', 
+        #           'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']]
+
+        #Get the prediction
+        prediction = model.predict(X_test)
+        #Return the prediction
+        #converrt it to a string
+        prediction = np.array2string(prediction)
+        #remove the square brackets
+        prediction = prediction.replace('[', '')
+        prediction = prediction.replace(']', '')
+        bike_predicition = int(prediction)
+        stand_prediction = 100 - bike_predicition
+        predictions = {}
+        predictions['Bikes'] = bike_predicition
+        predictions['Stands'] = stand_prediction
+        json_predictions = json.dumps(predictions)
+        return json_predictions
+    
 if __name__ == '__main__':
     app.run(debug=True)
