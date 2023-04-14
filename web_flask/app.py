@@ -170,20 +170,27 @@ def detailed():
                         <button id='close-button' class="close-button">&times;</button>
 
                         <div id='detailed_info'>
+                            <div class = "detailed_name">
                             <h3 class=''>{name} ({number})</h3>
                             <h4 class=''>{address}</h3>
+                            </div>
                             <div id='detailed_blocks'>
                                 <div id='available_bikes' class='info_block'>
                                     <p>Available Bikes:</p>
-                                    <p>{available_bikes}</p>
+                                    <p><i class="fa-solid fa-bicycle"></i> {available_bikes}</p>
                                 </div>
                                 <div id='available_stands' class='info_block'>
                                     <p>Available Stands:</p>
-                                    <p>{available_bike_stands}</p>
+                                    <p><i class="fa-solid fa-square-parking"></i> {available_bike_stands}</p>
                                 </div>
                             </div>
                             <div id='station_status'>
                                 <p class='block_green'>This station is: {status}</p>
+                            </div>
+                            <div class ="charts">
+                            <div class ="chart-buttons">
+                            <button class="chart-btn active" id="show-bikechart"><i class="fa-solid fa-bicycle"></i> Average Bikes</button>
+                            <button class="chart-btn" id="show-stationchart"><i class="fa-solid fa-square-parking"></i> Average Spaces</button>
                             </div>
                             <div id='availability_chart'>
                                 <canvas id="availabilityChart"></canvas>
@@ -191,6 +198,7 @@ def detailed():
                             <div id='occupancy_chart'>
                                 <canvas id="occupancyChart"></canvas>
                             </div>
+                            
                         </div>
                         <script>
                             var averageData = {json.dumps(average_bikes_stands_hours)};
