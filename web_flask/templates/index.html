@@ -298,7 +298,7 @@
               map: map,
               title: "You are here",
               icon: {
-                url: "http://maps.google.com/mapfiles/ms/icons/red.png"
+                url: "https://maps.google.com/mapfiles/kml/shapes/man.png"
                 
               }
             });
@@ -748,6 +748,10 @@
                       $("#detailed").addClass('show'); // fade in the detailed div
                       generateAvailabilityChart(averageData); 
                       generateOccupancyChart(averageData);
+                      $(document).ready(function() {
+                        
+                        $('#occupancy_chart').css('display', 'none');
+                    });
                     }
                   });
                 }
@@ -795,6 +799,9 @@
             }); 
           }
 
+        
+        }
+
         document.getElementById('show-circles').addEventListener("click", function() {
           for (var i = 0; i < circles.length; i++) {
               circles[i].setVisible(true);
@@ -814,11 +821,7 @@
 
           buttons[i].addEventListener('click', function(event) {
             var clickedButton = event.target; 
-            if (clickedButton.id === 'show-bikes') { 
-              clickedButton.classList.add('active');
-            } else {
-              clickedButton.classList.remove('active');
-            }
+            
             for (var j = 0; j < buttons.length; j++) {
               buttons[j].classList.remove('active');
               
@@ -827,7 +830,6 @@
             
           });
         }
-      }
 
       $(document).ready(function() {
         var descriptionVisible = false;
@@ -844,6 +846,22 @@
             }, 1000);
             descriptionVisible = true;
           }
+        });
+        $(document).on('click', '#show-stations', function(){
+          if (descriptionVisible) {
+            $("#map-button-descriptions").animate({
+              right: "-20%"
+            }, 1000);
+            descriptionVisible = false;
+          } 
+        });
+        $(document).on('click', '#show-bikes', function(){
+          if (descriptionVisible) {
+            $("#map-button-descriptions").animate({
+              right: "-20%"
+            }, 1000);
+            descriptionVisible = false;
+          } 
         });
       });
 
@@ -995,13 +1013,10 @@
         }
       });
     }
-
+    
+    
     $(document).ready(function() {
-      $('#occupancy_chart').css('display', 'none');
-    });
-
-    $(document).ready(function() {
-      $('#occupancy_chart').attr('style','display:none;');
+      
       function showAvailabilityChart() {
           $('#occupancy_chart').hide();
           $('#availability_chart').show();
@@ -1012,7 +1027,7 @@
           $('#availability_chart').hide();
       }
       
-      showAvailabilityChart();
+      
   
       $(document).on('click', '#show-bikechart', function(){
           showAvailabilityChart();
@@ -1029,7 +1044,6 @@
           clickedButton.addClass('active');
       });
   });
-
   currentWeather(current_weather);
 
   //Cian user interaction with date and time dropdowns
