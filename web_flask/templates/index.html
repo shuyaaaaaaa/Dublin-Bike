@@ -10,75 +10,142 @@
       <div id="logo">
         <h1>Dublin Bikes  <i class="fa-solid fa-person-biking"></i></h1>
       </div>
-      <div id="predictions">
-          <button id='plan_journey_button'>Plan Journey</button>
-          <div id="pred_content">
-            <!--Button for Date-->
-            <button class="datebtn">Enter the Date of your Journey:</button>
-            <select id="dateDropdown">
-              <!-- Placeholder -->
-              <option value="" disabled selected>Select a date</option>
-            </select>
-            <!--Button for Time-->
-            <button class="timebtn">Enter the Time of your Journey (Hour):</button>
-            <select id="timeDropdown">
-              <!-- Placeholder -->
-              <option value="" disabled selected>Select a time (hour)</option>
-            </select>
-            <!--Button for Station-->
-            <button class="timebtn">Enter the Station you need for your Journey:</button>
-            <select id="stationDropdown">
-              <!-- Placeholder -->
-              <option value="" disabled selected>Select a station</option>
-            </select>
-            <button id='predict_button'>Predict</button>
-            <div id="result">
-              <p id="result_text"></p>
-            </div>
-          </div>
-      </div>
       <div id="header-right">
         <div id="search">
-          <button id='search_button'><i class="fa-solid fa-magnifying-glass"></i></button>
+          <button id='search_button'>Plan Route</button>
         </div>
-        
       </div>
     </header>
+
+    <!-- Weather Information -->
     <div class="scroll-container">
       <div id='current-weather' class="scroll-content"></div>
     </div>
+
+    <!-- Map Section -->
     <div id="map"></div>
+
+    <!-- Deatiled information -->
+    <div id="detailed" class="scroll"></div>
+
+    <!-- Map buttons -->
     <div class = "button-container">
-    <button class="btn active" id="show-bikes"><i class="fa-solid fa-bicycle"></i> Available bikes</button>
-    <button class="btn" id="show-stations"><i class="fa-solid fa-square-parking"></i> Available spaces</button>
-    <button class = "btn" id = "show-circles"><i class="fa-solid fa-circle-notch"></i> Visialize</button>
-    </div>
-    <div class ="scale" id ="scale">
-      <div class ="scale-box">
-      <h3>Available bikes  <i class="fa-solid fa-bicycle"></i> </h3>
-      <p><i class="fa-solid fa-circle-notch" style="color: #43c70a;"></i> > <i class="fa-solid fa-circle-notch" style="color: #c7b70a;"></i> > <i class="fa-solid fa-circle-notch" style="color: #c70a0a;"></i></p>
-      <h3>Available stations  <i class="fa-solid fa-square-parking"></i></h3>
-      <p><i class="fa-solid fa-circle-notch fa-2xl"></i> > <i class="fa-solid fa-circle-notch fa-lg"></i> > <i class="fa-solid fa-circle-notch fa-2xs"></i></p>
+      <div class="map-buttons">
+        <button class="btn br-left" id="show-bikes"><i class="fa-solid fa-bicycle"></i> Available bikes</button>
+        <button class="btn" id="show-stations"><i class="fa-solid fa-square-parking"></i> Available spaces</button>
+        <button class = "btn br-right" id = "show-circles"><i class="fa-solid fa-circle-notch"></i> Visialize</button>
       </div>
     </div>
 
-    <div id="detailed">
+    <!-- Map Button Descriptions -->
+    <div id="map-button-descriptions">
+      <div class="flex-column">
+        <div class="scale flex-column">
+          <h3>Available Bikes  <i class="fa-solid fa-bicycle"></i> </h3>
+          <div class="flex-row">
+            <p>Low</p>
+            <div class="available-bar"></div>
+            <p>High</p>
+          </div>
+        </div>
+        <div class="scale align-center flex-column">
+          <h3>Available Stands  <i class="fa-solid fa-square-parking"></i> </h3>
+          <div class="flex-row">
+            <p>Low</p>
+            <p><i class="fa-solid fa-circle-notch fa-2xs"></i> > <i class="fa-solid fa-circle-notch fa-lg"></i> > </i><i class="fa-solid fa-circle-notch fa-2xl"></i></p>
+            <p>High</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="route">
+
+    <!-- Route Planner Div -->
+    <div id="route" class="scroll">
       <button id='route-close-button' class="close-button">&times;</button>
       <form action="/route" id='route_request' method="POST">
-        <label>Start:</label>
+        <label for="start">Start:</label>
         <input type="text" id ='start' name="start">
         <br>
-        <label>End:</label>
+        <label for="end">End:</label>
         <input type="text" id ='end' name="end">
         <br>
+        <div class="flex-row">
+          <label for="plan_journey_button">Plan future route:</label>
+          <input type="checkbox" id="plan_journey_button" class="check_box" name="plan_journey_button">
+        </div>
+        <div id="pred_content">
+          <!--Button for Date-->
+          <label for="dateDropdown" class="datebtn">Date of your Journey:</label>
+          <select id="dateDropdown" class="dropdown">
+            <!-- Placeholder -->
+            <option value="" disabled selected>Select a date</option>
+          </select>
+          <!--Button for Time-->
+          <label for="timeDropdown" class="timebtn">Time of your Journey (Hour):</label>
+          <select id="timeDropdown" class="dropdown">
+            <!-- Placeholder -->
+            <option value="" disabled selected>Select a time (hour)</option>
+          </select>
+        </div>
         <input type="submit" id="route-submit-button" value="Get Route">
       </form>
+      <div class="flex-column pred-container">
+        <span class="divider"></span>
+        <div class="route-helper">
+          <div class="flex-row">
+            <h3>Route Helper</h3>
+            <span class="icon">&#9432</span>
+          </div>
+          <div class="more-info-container">
+            <p id="more-info" class="more-info"></p>
+          </div>
+        </div>
+        <div class="flex-column">
+          <div id="start-station-name" class="station-name"></div>
+          <p class="pred-text">Predicted bikes available:</p>
+          <div class="station-pred">
+            <div id="start-station-pred" class="station-pred-bar"></div> 
+          </div>
+        </div>
+        <div class="flex-column">
+          <div id="end-station-name" class="station-name"></div>
+          <p class="pred-text">Predicted stands available:</p>
+          <div class="station-pred">
+            <div id="end-station-pred" class="station-pred-bar"></div>
+          </div>
+        </div>
+
+        <!-- Custom Prediction Section -->
+        <div class="flex-column margin-top">
+          <button class="custom-btn" id="custom-pred-btn">Custom Prediction</button>
+          <div class="custom-pred-container">
+            <select id="stationDropdown" class="dropdown">
+              <option value="" disabled selected>Select a station</option>
+            </select>
+            <button id="custom-pred-search" class="custom-btn">Search</button>
+          </div>
+          <div id="display-custom-pred" class="display-custom-pred">
+            <div id="custom-station-name" class="station-name"></div>
+            <p class="pred-text">Predicted bikes available:</p>
+            <div class="station-pred">
+              <div id="custom-station-pred-bikes" class="station-pred-bar"></div> 
+            </div>
+            <p class="pred-text">Predicted stands available:</p>
+            <div class="station-pred">
+              <div id="custom-station-pred-stands" class="station-pred-bar"></div> 
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex-column directions-container">
+        <div id="directions-info"></div>
+      </div>
     </div>
-    <div class ="footer">
+
+    <footer>
       <h3>Dublin Bikes  <i class="fa-solid fa-person-biking"></i></h3>
-    </div>
+    </footer>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://kit.fontawesome.com/e348a6b7c9.js" crossorigin="anonymous"></script>
@@ -167,7 +234,7 @@
                     "gamma": 0
                 },
                 {
-                    "hue": "#50a5d1"
+                    "hue": "#2ac4c4"
                 }
             ]
         },
@@ -204,7 +271,8 @@
                 }
             ]
         }
-    ];
+        ];
+
         var map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 53.3498, lng: -6.2603},
             zoom: 13.5,
@@ -234,92 +302,342 @@
                 
               }
             });
-      
-            
           });
         }
+          
+        let routeSubmitted = false;
+        let xhr;
+        var marker_start = null;
+        var marker_end = null;
+        var marker_waypoints = [];
+        var directionsDisplay = null
 
         // Route Function-Cian
         // Use AJAX to catch route form submission and then update the map with the response.
         $(document).ready(function(){
           $('#route_request').submit(function(event){
-            //prevent the form from submitting until the data is added
+
             event.preventDefault();
-            var formData = {
-              //adding ', Dublin' to the end of the input address to ensure that the geocoder returns the correct location
-              start: $('#start').val()+', Dublin',
-              end: $('#end').val()+', Dublin'
-            }
-            $.ajax({
-              type: "POST",
-              url: '/route',
-              data: formData ,
-              success: function(response){
-                console.log('Returned route received:', response)
-                var start_lat = response.start_lat
-                var start_lng = response.start_lng
-                var end_lat = response.end_lat
-                var end_lng = response.end_lng
 
-                //create the start and end points
-                var start = new google.maps.LatLng(start_lat, start_lng);
-                var end = new google.maps.LatLng(end_lat, end_lng);
-                //create the places service to confine the search to within xkm of the centre of dublin
+            if(routeSubmitted){
+              xhr.abort()
+              // Reset the form values
+              $('#start').val('');
+              $('#end').val('');
+              $('#dateDropdown').val('');
+              $('#timeDropdown').val('');
+              $('#directions-info').html('');
+              $('#stationDropdown').val('');
+              $('.display-custom-pred').removeClass('show');
+              $('.custom-pred-container').removeClass('show');
 
-              //create the directions service which gets the route.
-              var directionsService = new google.maps.DirectionsService();
-              directionsService.route({
-                origin: start,
-                destination: end,
-                travelMode: 'BICYCLING'//as we are making a bike application
-              }, function(response, status) {
-                if (status === 'OK') {
-                  console.log('Status for directions service is "OK": mapping route.')
-                  //display the route on the map
-                  var directionsDisplay = new google.maps.DirectionsRenderer({
-                    map: map,
-                    //make the line red because it is cooler than blue
-                    polylineOptions: {
-                    strokeColor: "red",
-                    strokeOpacity: 0.7,
-                    strokeWeight: 4
-                    },
-                    suppressMarkers: true // suppress default markers
-                  });
-                  directionsDisplay.setDirections(response);
-                  //read out the duration of the route
-                  var route = response.routes[0];
-                  var duration = route.legs[0].duration.text;
-                  //display this info
-                  var infowindow = new google.maps.InfoWindow({
-                    content: duration
-                  });
-                  //creating the end marker to display the trip duration
-                  var marker_end = new google.maps.Marker({
-                    position: end,
-                    map: map,
-                    title: duration
-                  });
-                  //creating the start marker
-                  var marker_start = new google.maps.Marker({
-                    position: start,
-                    map: map,
-                    title: null
-                  });
-                  //when you click the end marker you see the travel time
-                  marker_end.addListener('click', function() {
-                  infowindow.open(map, marker_end);
-                  });
-            
-                } else {
-                  console.log('Directions request failed due to ' + status);
-                }
-                });
+              // Hide the prediction container
+              $('.pred-container').removeClass('show');
 
+              // Reset the route submit button
+              var route_submit_button = $('#route-submit-button')
+              route_submit_button.val('Get Route');
+              route_submit_button.css('background-color', '');
+
+              // Reset the routeSubmitted flag
+              routeSubmitted = false;
+              // Remove the directions and markers from the map
+
+              if (marker_start) {
+                marker_start.setMap(null);
               }
-            })
+
+              if (marker_end) {
+                marker_end.setMap(null);
+              }
+
+              if (directionsDisplay) {
+                directionsDisplay.setMap(null);
+              }
+
+              marker_waypoints.forEach(function(marker) {
+                marker.setMap(null);
+                marker.setIco
+              });
+
+              marker_waypoints = []; // Clear the array
+
+              }else{
+
+              var route_submit_button = $('#route-submit-button')
+              route_submit_button.val('Reset Route')
+              route_submit_button.css('background-color', 'red')
+              routeSubmitted = true;
+
+              var sendData;
+
+              var formData = {
+                //adding ', Dublin' to the end of the input address to ensure that the geocoder returns the correct location
+                start: $('#start').val()+', Dublin',
+                end: $('#end').val()+', Dublin'
+              }
+              
+              // Prediction Section ----------------------------------------------------------------
+
+              //call the generate predictions function when subit button is clicked
+              //and send to app.py /predict route
+              //result is the result string
+              var result='';
+              var percent=0;
+              var station_r=0;
+
+              //call the generate predictions function
+              const dateDropdown = document.getElementById('dateDropdown');
+              const dateDropdownSelected = dateDropdown.value;
+
+              if(dateDropdownSelected){
+                X_test=generatePredictions();
+                X_test=JSON.stringify(X_test);
+                console.log('X Test Data to be sent:', X_test);
+                sendData = {start: formData.start, end: formData.end, X_test: X_test}
+                console.log('Date dropdown selected. Data to be sent = ', sendData)
+              } else{
+                sendData = {start: formData.start, end: formData.end}
+                console.log('No date selected. Data to be sent = ', sendData)
+              }
+
+              //Now send X_test to app.py to get the prediction along with the station number
+
+              xhr = $.ajax({
+                type: "POST",
+                url: '/route',
+                data: sendData,
+                complete: function(jqXHR, textStatus){
+
+                  if(textStatus == 'success'){
+                    var response = jqXHR.responseJSON;
+                    // show the result
+                    console.log('Response received:', response)
+
+                    if(response.hasOwnProperty('prediction')){
+                      response_start_station = response.prediction.start;
+                      response_end_station = response.prediction.end;
+
+                      var foundStationStart;
+                      var foundStationEnd;
+
+                      for (var i = 0; i < data.length; i++){
+                        var station = data[i];
+                        if(station[3]== response_start_station){
+                          response_start_station_name = station[2]
+                          foundStationStart = true
+                        }
+                        if(station[3] == response_end_station){
+                          response_end_station_name = station[2]
+                          foundStationEnd = true
+                        }
+                        if(foundStationStart && foundStationEnd){
+                          break
+                        }
+
+                      }
+                      response_pred_bikes = response.prediction.predBikes;
+                      response_pred_stands = response.prediction.predStands;
+                      $('.pred-container').toggleClass('show')
+                      $('#start-station-name').html('<h4>' + response_start_station_name + '<h4>')
+                      $('#end-station-name').html('<h4>' + response_end_station_name + '</h4>')
+                      $("#start-station-pred").css('width', response_pred_bikes + '%');
+                      $('#end-station-pred').css('width', response_pred_stands +'%');
+                      $('#start-station-pred').html('<p class="percentage">' + response_pred_bikes + '%</p>')
+                      $('#end-station-pred').html('<p class="percentage">' + response_pred_stands + '%</p>')
+                      $('#more-info').html('<span class="selected">' + response_start_station_name + '</span> is the closest station to your start point. We estimate <span class="selected">' + response_pred_bikes + '%</span> of the possible bikes at this station will be availabe. <span class="selected">' + response_end_station_name + '</span> is the closest station to your end point. We estimate <span class="selected">' + response_pred_stands + '%</span> of the possible stands at this station will be available. These estimations are based on your selected travel day, time, and the forecasted weather. These stations are marked in blue on the map.')
+                    }
+
+                    var start_lat = response.start_lat
+                    var start_lng = response.start_lng
+                    var start_station_lat = response.start_station_lat
+                    var start_station_long = response.start_station_long
+                    var end_station_lat = response.end_station_lat
+                    var end_station_long = response. end_station_long
+                    var end_lat = response.end_lat
+                    var end_lng = response.end_lng
+
+                    //create the start and end points
+                    var start = new google.maps.LatLng(start_lat, start_lng);
+                    var start_station = new google.maps.LatLng(start_station_lat, start_station_long)
+                    var end_station = new google.maps.LatLng(end_station_lat, end_station_long)
+                    var end = new google.maps.LatLng(end_lat, end_lng);
+                    //create the places service to confine the search to within xkm of the centre of dublin
+
+                    //create the directions service which gets the route.
+                    var directionsService = new google.maps.DirectionsService();
+
+                    var waypoints = [{location: start_station,stopover: true},{location: end_station,stopover: true}];
+
+                    directionsDisplay = new google.maps.DirectionsRenderer({
+                        polylineOptions: {
+                          strokeColor: "red",
+                          strokeOpacity: 0.7,
+                          strokeWeight: 4,
+                        },
+                        suppressMarkers: true, // suppress default markers
+                      });
+
+                    // Set the panel for displaying directions
+                    var directionsPanel = document.getElementById("directions-info");
+                    directionsDisplay.setPanel(directionsPanel);
+
+                    directionsService.route({
+                    origin: start,
+                    destination: end,
+                    waypoints: waypoints,
+                    optimizeWaypoints: false,
+                    travelMode: 'BICYCLING'//as we are making a bike application
+                    }, function(response, status) {
+
+                    if (status === 'OK') {
+                      console.log('Status for directions service is "OK": mapping route.')
+
+                      //read out the duration of the route
+                      var route = response.routes[0];
+                      var duration = route.legs[0].duration.text;
+
+                      directionsDisplay.setMap(map);
+                      directionsDisplay.setDirections(response);
+
+                      var steps = route.legs[0].steps;
+                      var directionsList = document.createElement("ol");
+                      directionsList.className = "directions-list";
+                      for (var i = 0; i < steps.length; i++) {
+                        var step = steps[i];
+                        var listItem = document.createElement("li");
+                        var distanceSpan = document.createElement("span");
+                        distanceSpan.className = "step-distance";
+                        distanceSpan.innerHTML = " (" + step.distance.text + ")";
+                        listItem.innerHTML = step.instructions;
+                        listItem.appendChild(distanceSpan);
+                      }
+                      directionsPanel.appendChild(directionsList);
+
+                      //display this info
+                      var infowindow = new google.maps.InfoWindow({
+                        content: duration
+                      });
+
+                      //creating the end marker to display the trip duration
+                      marker_end = new google.maps.Marker({
+                        position: end,
+                        map: map,
+                        title: duration
+                      });
+
+                      //creating the start marker
+                      marker_start = new google.maps.Marker({
+                        position: start,
+                        map: map,
+                        title: null
+                      });
+                      
+                      // Define custom icon for waypoints
+                      var waypointIcon = {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 7,
+                        fillColor: '#2ac4c4',
+                        fillOpacity: 1,
+                        strokeWeight: 1,
+                        strokeColor: '#000000'
+                      };
+
+                      // Create marker for waypoints
+                      waypoints.forEach(function(waypoint){
+                        var waypoint_marker = new google.maps.Marker({
+                          position: waypoint.location,
+                          map: map,
+                          icon: waypointIcon
+                        });
+                        marker_waypoints.push(waypoint_marker);
+                      })
+                      
+                      //when you click the end marker you see the travel time
+                      marker_end.addListener('click', function() {
+                      infowindow.open(map, marker_end);
+                      });
+
+                    } else {
+                      console.log('Directions request failed due to ' + status);
+                    }
+                    });
+
+                  }else if (textStatus == 'abort'){
+                    console.log('Request aborted.')
+                    return
+                  }
+                }
+              })
+            }
           })
         })
+
+      var result='';
+      var percent=0;
+      var station_r=0;
+      $(document).on('click', '#custom-pred-search', function(){
+        //call the generate predictions function
+        X_test=generatePredictions();
+        X_test=JSON.stringify(X_test);
+        station_selected = stationDropdown.value;
+        var foundStation;
+        for (var i = 0; i < data.length; i++){
+          var station = data[i];
+          if(station[3]== station_selected){
+            station_selected_name = station[2]
+            foundStation = true;
+          }
+          if(foundStation){
+            break
+          }
+        }
+
+        //remove the double quotes
+        station_selected=JSON.stringify(station_selected);
+        station_selected=station_selected.replace(/["]+/g, '');
+        console.log(X_test, station_selected);
+
+        //Now send X_test to app.py to get the prediction along with the station number
+        $.ajax({
+          type: "POST",
+          url: "/predict",
+          data: { station_selected, X_test },
+          success: function(response) {
+            response = JSON.parse(response)
+            if($('.display-custom-pred').hasClass('show')){
+
+            }else{
+              $('.display-custom-pred').toggleClass('show')
+            }
+            $('#custom-station-name').html('<h4>' + station_selected_name + '<h4>')
+            $("#custom-station-pred-bikes").css('width', response.Bikes + '%');
+            $('#custom-station-pred-bikes').html('<p class="percentage">' + response.Bikes + '%</p>')
+            $("#custom-station-pred-stands").css('width', response.Stands + '%');
+            $('#custom-station-pred-stands').html('<p class="percentage">' + response.Stands + '%</p>')
+
+            //find the number of total bike stands at this station
+            //find the ncorresponding number in column 1
+            // find the index of the row that has the given station number in column 0
+            var rowIndex = total_bike_stands_array.findIndex(row => row[0] === station_r); 
+            var total_bike_stands=total_bike_stands_array[rowIndex];
+            var stands=total_bike_stands[1]
+            console.log('Custom search - Stands',stands);
+            var available_bikes_graph= stands*percent/100;
+            //convert to nearest integer:
+            available_bikes=Math.round(available_bikes_graph);
+            console.log('Custom search - Bikes',available_bikes);
+          }
+        });
+      });
+
+      $(document).on('click', '#custom-pred-btn', function(){
+        $(".custom-pred-container").toggleClass('show');
+      });
+
+      $(document).on('click', '#custom-prediction-btn', function(){
+        $(".custom-prediction-container").toggleClass('show');
+      });
 
         // Generate markers
         for (var i = 0; i < data.length; i++){
@@ -332,15 +650,14 @@
     
           var bikeavailability = dynamic_data.available_bikes;
           var bikestandsavailability = dynamic_data.available_bike_stands;
-          
 
           var marker = new google.maps.Marker({
             position: { lat: station[0], lng: station[1] },
             map: map,
-                        
+            fillColor: 'blue'  
           });
+
           var circleRadius = 100;
-          
         
           var circle = new google.maps.Circle({
             strokeOpacity: 0.8,
@@ -352,8 +669,6 @@
             center: {lat: station[0], lng: station[1]},
             radius: circleRadius      
           });
-          
-          
           
           if (bikeavailability > 10) {
             circle.setOptions({
@@ -393,166 +708,160 @@
 
           markers.push(marker);
 
-          // Added dynamic station data on load instead of calling the API on every hover. Better performance.
-          var infowindow = new google.maps.InfoWindow({
-            content: '<h3>' + station[2] + '</h3>' + '<p><i class="fa-solid fa-bicycle"></i> Available Bikes: ' + dynamic_data.available_bikes +
-              '  <i class="fa-solid fa-square-parking"></i> Available Stands: ' + dynamic_data.available_bike_stands + '</p>' + "<input style='display: none' value='" +
-                station[3] + "' id='station_num'>",
-            options: {
-              className: 'info-window'
-            }
-          });
-          //open the info window when we hover over the marker
-          marker.addListener('mouseover', (function(marker, infowindow){
-            return function() {
-              infowindow.open(map, marker);
-            }
-          })(marker, infowindow));
-          //close the infowindow when we move off the marker
-          marker.addListener('mouseout', (function(marker, infowindow){ 
-              return function(){
-                infowindow.close();
+            // Added dynamic station data on load instead of calling the API on every hover. Better performance.
+            var infowindow = new google.maps.InfoWindow({
+              content: '<h3>' + station[2] + '</h3>' + '<p><i class="fa-solid fa-bicycle"></i> Available Bikes: ' + dynamic_data.available_bikes +
+                '  <i class="fa-solid fa-square-parking"></i> Available Stands: ' + dynamic_data.available_bike_stands + '</p>' + "<input style='display: none' value='" +
+                  station[3] + "' id='station_num'>",
+              options: {
+                className: 'info-window'
+              }
+            });
+            //open the info window when we hover over the marker
+            marker.addListener('mouseover', (function(marker, infowindow){
+              return function() {
+                infowindow.open(map, marker);
               }
             })(marker, infowindow));
+            //close the infowindow when we move off the marker
+            marker.addListener('mouseout', (function(marker, infowindow){ 
+                return function(){
+                  infowindow.close();
+                }
+              })(marker, infowindow));
 
-          
+            marker.addListener('click', (function(marker, infowindow){
+              return function() {
+                // George - Extract station number from marker's info window
+                var station_num = $('#station_num').val();
 
-          marker.addListener('click', (function(marker, infowindow){
-            return function() {
-              // George - Extract station number from marker's info window
-              var station_num = $('#station_num').val();
-
-              // George - Use AJAX to submit a POST request to server for associated server information
-              $.ajax({
-                  type: "POST",
-                  url: "/detailed",
-                  data: { station_num },
-                  success: function(response) {
-                    $("#detailed").html(response); // update the detailed div with response
-                    $("#detailed").addClass('show'); // fade in the detailed div
-                    generateAvailabilityChart(averageData); 
-                    generateOccupancyChart(averageData);
-                    if($('#route').hasClass('show')){
-                      $("#route").removeClass('show'); // remove the 'show' class to hide the route div if open
+                // George - Use AJAX to submit a POST request to server for associated server information
+                $.ajax({
+                    type: "POST",
+                    url: "/detailed",
+                    data: { station_num },
+                    success: function(response) {
+                      $("#detailed").html(response); // update the detailed div with response
+                      if($('#route').hasClass('show')){
+                        $("#route").removeClass('show');
+                      }
+                      $("#detailed").addClass('show'); // fade in the detailed div
+                      generateAvailabilityChart(averageData); 
+                      generateOccupancyChart(averageData);
                     }
-
-                  }
-                });
-              }
-            })(marker, infowindow));  
-            
-            document.getElementById("show-bikes").addEventListener("click", function() {
-              for (var j = 0; j < markers.length; j++) {
-                  markers[j].setVisible(true);
-                  circles[j].setVisible(false);
-                  markers[j].setLabel({
-                      text: live_station_data[j].available_bikes.toString(),
-                      color: "#fff",
-                      fontSize: "14px",
-                      fontWeight: "bold",
-                      background: "#007bff"
                   });
-              }
-              document.getElementById("scale").style.display = "none";
-          });
-      
-          if (document.getElementById("show-bikes").classList.contains("active")){
-            for (var j = 0; j < markers.length; j++) {
+                }
+              })(marker, infowindow));  
               
-              markers[j].setLabel({
-                  text: live_station_data[j].available_bikes.toString(),
-                  color: "#fff",
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  background: "#007bff"
-              });
-          }
-          }
-      
-          document.getElementById("show-stations").addEventListener("click", function() {
+              document.getElementById("show-bikes").addEventListener("click", function() {
+                for (var j = 0; j < markers.length; j++) {
+                    markers[j].setVisible(true);
+                    circles[j].setVisible(false);
+                    markers[j].setLabel({
+                        text: live_station_data[j].available_bikes.toString(),
+                        color: "#fff",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        background: "#007bff"
+                    });
+                }
+            });
+        
+            if (document.getElementById("show-bikes").classList.contains("active")){
               for (var j = 0; j < markers.length; j++) {
                 
-                  markers[j].setVisible(true);
-                  circles[j].setVisible(false);
-                  markers[j].setLabel({
-                      text: live_station_data[j].available_bike_stands.toString(),
-                      color: "#fff",
-                      fontSize: "14px",
-                      fontWeight: "bold",
-                      background: "#007bff"
-                  });
-              }
-              document.getElementById("scale").style.display = "none";
+                markers[j].setLabel({
+                    text: live_station_data[j].available_bikes.toString(),
+                    color: "#fff",
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    background: "#007bff"
+                });
+            }
+            }
+      
+            document.getElementById("show-stations").addEventListener("click", function() {
+                for (var j = 0; j < markers.length; j++) {
+                    markers[j].setVisible(true);
+                    circles[j].setVisible(false);
+                    markers[j].setLabel({
+                        text: live_station_data[j].available_bike_stands.toString(),
+                        color: "#fff",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        background: "#007bff"
+                    });
+                }
+            }); 
+          }
+
+        document.getElementById('show-circles').addEventListener("click", function() {
+          for (var i = 0; i < circles.length; i++) {
+              circles[i].setVisible(true);
+              markers[i].setVisible(false);
+          }
+        }); 
+
+        var buttons = document.getElementsByClassName('btn');
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].addEventListener('mouseover', function() {
+            this.style.opacity = '0.7';
           });
-          
-          
-            
-        }
-        
 
-      }
-      
-      document.getElementById("scale").style.display = "none";
+          buttons[i].addEventListener('mouseout', function() {
+            this.style.opacity = '1';
+          });
 
-      document.getElementById('show-circles').addEventListener("click", function() {
-        for (var i = 0; i < circles.length; i++) {
-            circles[i].setVisible(true);
-            markers[i].setVisible(false);
-        }
-
-            document.getElementById("scale").style.display = "block";
-    }); 
-    
-        
-
-      var buttons = document.getElementsByClassName('btn');
-      for (var i = 0; i < buttons.length; i++) {
-        buttons[i].addEventListener('mouseover', function() {
-          this.style.opacity = '0.7';
-        });
-
-        buttons[i].addEventListener('mouseout', function() {
-          this.style.opacity = '1';
-        });
-
-        buttons[i].addEventListener('click', function(event) {
-          var clickedButton = event.target; 
-          if (clickedButton.id === 'show-bikes') { 
+          buttons[i].addEventListener('click', function(event) {
+            var clickedButton = event.target; 
+            if (clickedButton.id === 'show-bikes') { 
+              clickedButton.classList.add('active');
+            } else {
+              clickedButton.classList.remove('active');
+            }
+            for (var j = 0; j < buttons.length; j++) {
+              buttons[j].classList.remove('active');
+              
+            }
             clickedButton.classList.add('active');
-          } else {
-            clickedButton.classList.remove('active');
-          }
-          for (var j = 0; j < buttons.length; j++) {
-            buttons[j].classList.remove('active');
             
-          }
-          clickedButton.classList.add('active');
-          
-        });
+          });
+        }
       }
 
+      $(document).ready(function() {
+        var descriptionVisible = false;
+        $("#map-button-descriptions").css("right", "-20%");
+        $(document).on('click', '#show-circles', function(){
+          if (descriptionVisible) {
+            $("#map-button-descriptions").animate({
+              right: "-20%"
+            }, 1000);
+            descriptionVisible = false;
+          } else {
+            $("#map-button-descriptions").animate({
+              right: "2%"
+            }, 1000);
+            descriptionVisible = true;
+          }
+        });
+      });
 
-
-      
-
-  
       // George - Open and close side display
       $(document).on('click', '#close-button', function(){
                 $("#detailed").removeClass('show'); // remove the 'show' class to hide the detailed div
-            
-            });
+      });
       
       $(document).on('click', '#search_button', function(){
-          $("#route").addClass('show'); // add the 'show' class to display the route div
           if($('#detailed').hasClass('show')){
             $("#detailed").removeClass('show'); // remove the 'show' class to hide the detailed div if open
-          }
-          
+          }  
+          $("#route").addClass('show'); // add the 'show' class to display the route div
       });
 
       $(document).on('click', '#route-close-button', function(){
                 $("#route").removeClass('show'); // remove the 'show' class to hide the route div
-            });
+      });
 
       // George Current Weather Function
       var current_weather = {{ current_weather | safe }};
@@ -583,9 +892,8 @@
                       <div class='weather-item'>${temp}</div>
                       <div class='weather-item'>${today}</div>`
         $('#current-weather').html(weather);
-        console.log(today)
       }
-      
+        
       // George Historical Chart Functions
       function generateAvailabilityChart(data) {
         const ctx = document.getElementById('availabilityChart').getContext('2d');
@@ -593,375 +901,301 @@
         const dataset = labels.map(hour => data[hour]['Avg A']);
         const currentDay = getDay();
 
-        availabilityBikeChartInstance = new Chart(ctx, {
+      availabilityBikeChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Average Available Bikes per Hour (${currentDay})`,
+                data: dataset,
+                backgroundColor: '#2ac4c4',
+                borderColor: '#2ac4c4',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true, 
+            maintainAspectRatio: false, 
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#f2f2f2'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#f2f2f2' 
+                    },
+                    beginAtZero: true 
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        
+                            color: '#f2f2f2' 
+                        }
+                    }
+                
+            }
+        }
+      });
+    }
+      
+    function getDay(){
+      const today = new Date();
+      const options = { weekday: 'long' };
+      return today.toLocaleDateString(undefined, options);
+    }
+
+    function generateOccupancyChart(data) {
+      const ctx = document.getElementById('occupancyChart').getContext('2d');
+      const labels = Object.keys(data);
+      const dataset = labels.map(hour => data[hour]['Avg O']);
+      const currentDay = getDay();
+
+      new Chart(ctx, {
           type: 'bar',
           data: {
               labels: labels,
               datasets: [{
-                  label: `Average Available Bikes per Hour (${currentDay})`,
+                  label: `Average Available Stands per Hour (${currentDay})`,
                   data: dataset,
-                  backgroundColor: 'rgba(242, 242, 242)',
-                  borderColor: 'rgba(242, 242, 242)',
+                  backgroundColor: '#2ac4c4',
+                  borderColor: '#2ac4c4',
                   borderWidth: 1
               }]
           },
           options: {
-              responsive: true, 
-              maintainAspectRatio: false, 
-              scales: {
-                  x: {
-                      ticks: {
-                          color: '#f2f2f2'
-                      }
-                  },
-                  y: {
-                      ticks: {
-                          color: '#f2f2f2' 
-                      },
-                      beginAtZero: true 
-                  }
-              },
-              plugins: {
-                  legend: {
-                      labels: {
-                          
-                              color: '#f2f2f2' 
-                          }
-                      }
-                  
-              }
-          }
-      });
-      
-      
-      }
-      
-      function getDay(){
-        const today = new Date();
-        const options = { weekday: 'long' };
-        return today.toLocaleDateString(undefined, options);
-      }
-
-      function generateOccupancyChart(data) {
-        const ctx = document.getElementById('occupancyChart').getContext('2d');
-        const labels = Object.keys(data);
-        const dataset = labels.map(hour => data[hour]['Avg O']);
-        const currentDay = getDay();
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: `Average Available Stands per Hour (${currentDay})`,
-                    data: dataset,
-                    backgroundColor: 'rgba(242, 242, 242)',
-                    borderColor: 'rgba(242, 242, 242)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-              responsive: true, 
-              maintainAspectRatio: false, 
-              
-              scales: {
-                  x: {
-                      ticks: {
-                          color: '#f2f2f2'
-                      }
-                  },
-                  y: {
-                      ticks: {
-                          color: '#f2f2f2' 
-                      },
-                      beginAtZero: true 
-                  }
-              },
-              plugins: {
-                  legend: {
-                      labels: {
-                          
-                              color: '#f2f2f2' 
-                          }
-                      }
-                  
-              }
-          }
-        });
-      }
-      $(document).ready(function() {
-        $('#occupancy_chart').css('display', 'none');
-      });
-      
-
-      $(document).ready(function() {
-        $('#occupancy_chart').attr('style','display:none;');
-        function showAvailabilityChart() {
-            $('#occupancy_chart').hide();
-            $('#availability_chart').show();
-        }
-    
-        function showOccupancyChart() {
-            $('#occupancy_chart').show();
-            $('#availability_chart').hide();
-        }
-        
-        showAvailabilityChart();
-    
-        $(document).on('click', '#show-bikechart', function(){
-            showAvailabilityChart();
-        });
-    
-        $(document).on('click', '#show-stationchart', function(){
-            showOccupancyChart();
-        });
-    
-        var chart_buttons = $('.chart-btn');
-        $(document).on('click', '.chart-btn', function(event) {
-            var clickedButton = $(event.target);
-            $('.chart-btn').removeClass('active');
-            clickedButton.addClass('active');
-        });
-    });
-    
-      
-      
-      
-      
-
-      
-
-
-      currentWeather(current_weather);
-
-      //Cian user interaction with date and time dropdowns
-      //when the plan journey button is clicked display a menu with the following dropwdowns
-      //station, date and time
-      $(document).on('click', '#plan_journey_button', function(){
-        $("#pred_content").toggleClass('show');
-      });
-
-
-      //when the user selects enter for those values call the generatePredictions function
-      // next steps:
-      //create 3 dropdown menus for user to enter station, date and time
-      // Get the current date
-      var currentDate = new Date();
-      var currentHour = currentDate.getHours();
-      //the first day and last day is handled differently
-      //current day starts at next 3 hour interval
-      var remainder = currentHour % 3;
-      var startHour = currentHour + (3 - remainder);
-      // Loop through the next 5 days and generate options for each date
-      //is this range correct?
-      for (var i = 1; i < 7; i++) {
-        // Create a new date object for the current date + i days
-        var date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
-        // Format the date as YYYY-MM-DD
-        var formattedDate = date.toISOString().slice(0, 10);
-        // Create a new option element for the date and add it to the dropdown menu
-        var option = document.createElement("option");
-        option.text = formattedDate;
-        option.value = formattedDate;
-        dateDropdown.add(option);
-      }
-
-      var timeDropdown = document.getElementById("timeDropdown");
-
-      // Generate the time dropdown options for the selected date
-      function generateTimeOptions() {
-        // Clear the existing options in the time dropdown
-        timeDropdown.innerHTML = "";
-        // Get the selected date from the date dropdown
-        var selectedDate = new Date($("#dateDropdown").val());
-        // Calculate the start hour and end hour for the selected date
-        var startHour, endHour;
-        if (selectedDate.getDate() == currentDate.getDate()) {
-          // First day
-          //var remainder = currentHour % 3;
-          startHour = currentHour + 1;//-remainder;
-          endHour = 23;
-        } else if (selectedDate.getDate() == currentDate.getDate() + 5) {
-          // Last day
-          startHour = 0;
-          //var remainder = currentHour % 3;
-          endHour = currentHour - 1 ;//- remainder;
-        } else {
-          // Middle day
-          startHour = 0;
-          endHour = 21;
-        }
-        // Generate the time dropdown options based on the available hours
-        for (var j = startHour; j <= endHour; j += 1) {
-          var option = document.createElement("option");
-          var timeString = j.toString().padStart(2, "0") + ":00:00";
-          option.text = timeString;
-          option.value = timeString;
-          timeDropdown.add(option);
-        }
-      }
-
-      // Generate the time dropdown options for the first day by default
-      generateTimeOptions();
-
-      // Attach an event listener to the date dropdown element
-      $('#dateDropdown').on('change', function() {
-        // Generate the time dropdown options for the selected date
-        generateTimeOptions();
-      });
-
-        //finally the station dropdown menu
-      var stationDropdown = document.getElementById("stationDropdown");
-      //get the station names from the station data
-      var station_data= {{ live_station_data | safe }};
-      //sort the station data alphabetically based on station name
-      //this is more user readable
-      station_data.sort(function(a, b) {
-        var A = a.name.toUpperCase(); // ignore upper and lowercase
-        var B = b.name.toUpperCase();
-        if (A < B) {
-          return -1;
-        }
-        if (A > B) {
-          return 1;
-        }
-        // names are equal
-        return 0;
-      });
-
-      //get the station numbers
-      //loop through the station names and add them to the dropdown menu
-      for (var i=0;i<station_data.length;i++){
-        var option = document.createElement("option");
-        var stat=station_data[i]
-        var stationNum = stat.number;
-        var stationName=stat.name;
-        option.text = stationName+' '+stationNum;
-        option.value = stationNum;
-        stationDropdown.add(option);
-      } 
-      //Cian generate predictions function
-      function generatePredictions(){
-        //make these drop down menus
-        var user_pred_station=stationDropdown.value;
-        // drop down of next 5 days
-        var user_pred_date = dateDropdown.value;
-        //drop down from hours all hours in the day so map to 3 hour intervals
-        var hour = parseInt(timeDropdown.value.substring(0, 2));
-        if (hour%3==0){
-          var user_pred_time = timeDropdown.value;
-        }
-        else if(hour%3==1){
-          hour=hour-1;
-          var user_pred_time = hour.toString().padStart(2, "0") + ":00:00";
-        }
-        else if(hour%3==2){
-          hour=hour+1;
-          var user_pred_time = hour.toString().padStart(2, "0") + ":00:00";
-        }
-        //this value can be used for getting the correct weather data
-        var merge_pred_date_time = user_pred_date + ' ' + user_pred_time
-
-        //Cian - weather forecast function
-        var forecast_weather= {{ forecast_weather | safe }};
-        //conole.log(forecast_weather.list)
-        function forecastWeather(forecast_weather){
-          //find the correct weather data for the date and time the user has selected
-          for (var i=0; i<forecast_weather.list.length; i++){
-            console.log(forecast_weather.list[i].dt_txt)
-            console.log(merge_pred_date_time)
-            var dateStr = forecast_weather.list[i].dt_txt
-            if( dateStr == merge_pred_date_time){
-              //extract temperature, wind speed and rain
-             
-              var f_temp = forecast_weather.list[i].main.temp;
-              var f_wind_speed = forecast_weather.list[i].wind.speed
-              // check is rain is present, if it is then extract rain val,
-              //if not then set to 0 instead of null
-              var f_rain = forecast_weather.list[i].rain ? forecast_weather.list[i].rain["3h"] : 0;
-              return [f_temp, f_wind_speed, f_rain];
-            }
-          }
-          return null; //if no data obtained
-        }
-
-        var [pred_temp, pred_wind_speed, pred_rain] = forecastWeather(forecast_weather);
- 
-        //convert the hour to integer format
-        var user_pred_time_int = parseInt(user_pred_time)
-        //extract the future day of the week from the date
-        const date = new Date(user_pred_date);
-        const day = date.getDay(); // returns a number between 0 (Sunday) and 6 (Saturday)
-        //insert a 1 in the column corresponding to the day of the week
-        var user_pred_day_col=day+4
-        //set all days to zero initially
-        var X_test= [[pred_temp,pred_wind_speed,pred_rain,user_pred_time_int,0,0,0,0,0,0,0]]
-        X_test.forEach((column) => {
-          column[user_pred_day_col] = 1;
-        });
-        return X_test
-      }
-
-      //call the generate predictions function when subit button is clicked
-      //and send to app.py /predict route
-      //result is the result string
-      var result='';
-      var percent=0;
-      var station_r=0;
-      $(document).on('click', '#predict_button', function(){
-        //call the generate predictions function
-        X_test=generatePredictions();
-        X_test=JSON.stringify(X_test);
-        station_selected = stationDropdown.value;
-        //remove the double quotes
-        station_selected=JSON.stringify(station_selected);
-        station_selected=station_selected.replace(/["]+/g, '');
-        console.log(X_test, station_selected);
-        //Now send X_test to app.py to get the prediction along with the station number
-        $.ajax({
-                    type: "POST",
-                    url: "/predict",
-                    data: { station_selected, X_test },
-                    success: function(response) {
-                      $("#result_text").html(response); // show the result
-                      result=response;
-                      console.log(result);
-                      //Using the station number and bike availability percentage make a graph
-                      //showing the number of bikes available at that station at that time
-                      const regex = /(\d+)% of bikes will be available at station number (\d+) at/;
-                      const match = result.match(regex);
-                      //extracts the percentage and station number from the result string
-                      if (match) {
-                          percent = parseInt(match[1]);
-                          station_r = parseInt(match[2]);
-                          console.log(percent, station_r);
-                      } else {
-                          console.log('No match found');
-                      }
-
-                      //find the number of total bike stands at this station
-                      //find the ncorresponding number in column 1
-                      // find the index of the row that has the given station number in column 0
-                      var rowIndex = total_bike_stands_array.findIndex(row => row[0] === station_r); 
-                      var total_bike_stands=total_bike_stands_array[rowIndex];
-                      var stands=total_bike_stands[1]
-                      console.log('Stands at this station',stands);
-                      var available_bikes_graph= stands*percent/100;
-                      //convert to nearest integer:
-                      available_bikes=Math.round(available_bikes_graph);
-                      console.log('Avaialable Bikes at this station',available_bikes);
-                      //Left to do:
-                      //process this and graph it
-                      //make css look better
-                      // circles toggle the wrong way
-                      //update the data when george gets new weather data
+            responsive: true, 
+            maintainAspectRatio: false, 
+            
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#f2f2f2'
                     }
-                });
+                },
+                y: {
+                    ticks: {
+                        color: '#f2f2f2' 
+                    },
+                    beginAtZero: true 
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        
+                            color: '#f2f2f2' 
+                        }
+                    }
+                
+            }
+        }
       });
+    }
 
+    $(document).ready(function() {
+      $('#occupancy_chart').css('display', 'none');
+    });
 
+    $(document).ready(function() {
+      $('#occupancy_chart').attr('style','display:none;');
+      function showAvailabilityChart() {
+          $('#occupancy_chart').hide();
+          $('#availability_chart').show();
+      }
+  
+      function showOccupancyChart() {
+          $('#occupancy_chart').show();
+          $('#availability_chart').hide();
+      }
+      
+      showAvailabilityChart();
+  
+      $(document).on('click', '#show-bikechart', function(){
+          showAvailabilityChart();
+      });
+  
+      $(document).on('click', '#show-stationchart', function(){
+          showOccupancyChart();
+      });
+    
+      var chart_buttons = $('.chart-btn');
+      $(document).on('click', '.chart-btn', function(event) {
+          var clickedButton = $(event.target);
+          $('.chart-btn').removeClass('active');
+          clickedButton.addClass('active');
+      });
+  });
 
+  currentWeather(current_weather);
 
+  //Cian user interaction with date and time dropdowns
+  //when the plan journey button is clicked display a menu with the following dropwdowns
+  //station, date and time
+  $(document).on('click', '#plan_journey_button', function(){
+    $("#pred_content").toggleClass('show');
+  });
+
+  //when the user selects enter for those values call the generatePredictions function
+  // next steps:
+  //create 3 dropdown menus for user to enter station, date and time
+  // Get the current date
+  var currentDate = new Date();
+  var currentHour = currentDate.getHours();
+  //the first day and last day is handled differently
+  //current day starts at next 3 hour interval
+  var remainder = currentHour % 3;
+  var startHour = currentHour + (3 - remainder);
+  // Loop through the next 5 days and generate options for each date
+  //is this range correct?
+  for (var i = 1; i < 7; i++) {
+    // Create a new date object for the current date + i days
+    var date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
+    // Format the date as YYYY-MM-DD
+    var formattedDate = date.toISOString().slice(0, 10);
+    // Create a new option element for the date and add it to the dropdown menu
+    var option = document.createElement("option");
+    option.text = formattedDate;
+    option.value = formattedDate;
+    dateDropdown.add(option);
+  }
+
+  var timeDropdown = document.getElementById("timeDropdown");
+
+  // Generate the time dropdown options for the selected date
+  function generateTimeOptions() {
+    // Clear the existing options in the time dropdown
+    timeDropdown.innerHTML = "";
+    // Get the selected date from the date dropdown
+    var selectedDate = new Date($("#dateDropdown").val());
+    // Calculate the start hour and end hour for the selected date
+    var startHour, endHour;
+    if (selectedDate.getDate() == currentDate.getDate()) {
+      // First day
+      //var remainder = currentHour % 3;
+      startHour = currentHour + 1;//-remainder;
+      endHour = 23;
+    } else if (selectedDate.getDate() == currentDate.getDate() + 5) {
+      // Last day
+      startHour = 0;
+      //var remainder = currentHour % 3;
+      endHour = currentHour - 1 ;//- remainder;
+    } else {
+      // Middle day
+      startHour = 0;
+      endHour = 21;
+    }
+    // Generate the time dropdown options based on the available hours
+    for (var j = startHour; j <= endHour; j += 1) {
+      var option = document.createElement("option");
+      var timeString = j.toString().padStart(2, "0") + ":00:00";
+      option.text = timeString;
+      option.value = timeString;
+      timeDropdown.add(option);
+    }
+  }
+
+  // Generate the time dropdown options for the first day by default
+  generateTimeOptions();
+
+  // Attach an event listener to the date dropdown element
+  $('#dateDropdown').on('change', function() {
+    // Generate the time dropdown options for the selected date
+    generateTimeOptions();
+  });
+
+  //finally the station dropdown menu
+  var stationDropdown = document.getElementById("stationDropdown");
+    //get the station names from the station data
+    var station_data= {{ live_station_data | safe }};
+    //sort the station data alphabetically based on station name
+    //this is more user readable
+    station_data.sort(function(a, b) {
+      var A = a.name.toUpperCase(); // ignore upper and lowercase
+      var B = b.name.toUpperCase();
+      if (A < B) {
+        return -1;
+      }
+      if (A > B) {
+        return 1;
+      }
+      // names are equal
+      return 0;
+    });
+
+    //get the station numbers
+    //loop through the station names and add them to the dropdown menu
+    for (var i=0;i<station_data.length;i++){
+      var option = document.createElement("option");
+      var stat=station_data[i]
+      var stationNum = stat.number;
+      var stationName=stat.name;
+      option.text = stationName+' '+stationNum;
+      option.value = stationNum;
+      stationDropdown.add(option);
+    } 
+  
+  //Cian generate predictions function
+  function generatePredictions(){
+    // drop down of next 5 days
+    var user_pred_date = dateDropdown.value;
+    //drop down from hours all hours in the day so map to 3 hour intervals
+    var hour = parseInt(timeDropdown.value.substring(0, 2));
+    if (hour%3==0){
+      var user_pred_time = timeDropdown.value;
+    }
+    else if(hour%3==1){
+      hour=hour-1;
+      var user_pred_time = hour.toString().padStart(2, "0") + ":00:00";
+    }
+    else if(hour%3==2){
+      hour=hour+1;
+      var user_pred_time = hour.toString().padStart(2, "0") + ":00:00";
+    }
+    //this value can be used for getting the correct weather data
+    var merge_pred_date_time = user_pred_date + ' ' + user_pred_time
+
+    //Cian - weather forecast function
+    var forecast_weather= {{ forecast_weather | safe }};
+    //conole.log(forecast_weather.list)
+
+    function forecastWeather(forecast_weather){
+      //find the correct weather data for the date and time the user has selected
+      for (var i=0; i<forecast_weather.list.length; i++){
+        var dateStr = forecast_weather.list[i].dt_txt
+        if( dateStr == merge_pred_date_time){
+
+          //extract temperature, wind speed and rain
+          var f_temp = forecast_weather.list[i].main.temp;
+          var f_wind_speed = forecast_weather.list[i].wind.speed
+          // check is rain is present, if it is then extract rain val,
+          //if not then set to 0 instead of null
+          var f_rain = forecast_weather.list[i].rain ? forecast_weather.list[i].rain["3h"] : 0;
+          return [f_temp, f_wind_speed, f_rain];
+        }
+      }
+      return null; //if no data obtained
+    }
+
+    var [pred_temp, pred_wind_speed, pred_rain] = forecastWeather(forecast_weather);
+
+    //convert the hour to integer format
+    var user_pred_time_int = parseInt(user_pred_time)
+    //extract the future day of the week from the date
+    const date = new Date(user_pred_date);
+    const day = date.getDay(); // returns a number between 0 (Sunday) and 6 (Saturday)
+    //insert a 1 in the column corresponding to the day of the week
+    var user_pred_day_col=day+4
+    //set all days to zero initially
+    var X_test= [[pred_temp,pred_wind_speed,pred_rain,user_pred_time_int,0,0,0,0,0,0,0]]
+    X_test.forEach((column) => {
+      column[user_pred_day_col] = 1;
+    });
+    return X_test
+  }
     </script>
     <!-- Googlemap API --> 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3NV_XtqrUxY3YWqZfs1W7pL8EMM4xeoY&language=en&callback=initMap&libraries=places"></script>
