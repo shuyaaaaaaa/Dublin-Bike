@@ -616,6 +616,7 @@ button.close-button:hover{
     top: 25%;
     height: 70%;
     left:7%;
+    
   }
 
   #occupancy_chart{
@@ -623,7 +624,10 @@ button.close-button:hover{
     bottom: 5%;
     height: 70%;
     left:7%;
+    
   }
+
+ 
   
 .charts{
     border-color: #2ac4c4;
