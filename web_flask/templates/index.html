@@ -539,18 +539,29 @@
                         content: duration
                       });
 
+                      var markerIcon = {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 10,
+                        fillColor: '#2ac474',
+                        fillOpacity: 1,
+                        strokeWeight: 1,
+                        strokeColor: '#000000'
+                      }
+
                       //creating the end marker to display the trip duration
                       marker_end = new google.maps.Marker({
                         position: end,
                         map: map,
-                        title: duration
+                        title: duration,
+                        icon: markerIcon
                       });
 
                       //creating the start marker
                       marker_start = new google.maps.Marker({
                         position: start,
                         map: map,
-                        title: null
+                        title: null,
+                        icon: markerIcon
                       });
                       
                       // Define custom icon for waypoints
