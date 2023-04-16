@@ -75,16 +75,16 @@
           <input type="checkbox" id="plan_journey_button" class="check_box" name="plan_journey_button">
         </div>
         <div id="pred_content">
+
           <!--Button for Date-->
           <label for="dateDropdown" class="datebtn">Date of your Journey:</label>
           <select id="dateDropdown" class="dropdown">
-            <!-- Placeholder -->
             <option value="" disabled selected>Select a date</option>
           </select>
+
           <!--Button for Time-->
           <label for="timeDropdown" class="timebtn">Time of your Journey (Hour):</label>
           <select id="timeDropdown" class="dropdown">
-            <!-- Placeholder -->
             <option value="" disabled selected>Select a time (hour)</option>
           </select>
         </div>
@@ -142,20 +142,20 @@
         <div id="directions-info"></div>
       </div>
     </div>
-
     <footer>
       <h3>Dublin Bikes  <i class="fa-solid fa-person-biking"></i></h3>
     </footer>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://kit.fontawesome.com/e348a6b7c9.js" crossorigin="anonymous"></script>
     <script>
+
       var circles = [];
       var total_bike_stands_array=[];
       var markers = [];
+
       // Map function
-      //initialise the map to  Dublin and load as a roadmap
+      // Initialise the map to  Dublin and load as a roadmap
       function initMap(){
 
         var mapStyle = [
@@ -315,7 +315,7 @@
         var startValue = null;
         var endValue = null;
 
-        // Route Function-Cian
+        // Route Function
         // Use AJAX to catch route form submission and then update the map with the response.
         $(document).ready(function(){
           $('#route_request').submit(function(event){
@@ -397,16 +397,12 @@
                 end: endValue +', Dublin'
               }
               
-              // Prediction Section ----------------------------------------------------------------
-
-              //call the generate predictions function when subit button is clicked
-              //and send to app.py /predict route
-              //result is the result string
+              // Prediction Section -----------------------------------------------
+              // call the generate predictions function when submit button is clicked
               var result='';
               var percent=0;
               var station_r=0;
 
-              //call the generate predictions function
               const dateDropdown = document.getElementById('dateDropdown');
               const dateDropdownSelected = dateDropdown.value;
 
@@ -421,8 +417,6 @@
                 console.log('No date selected. Data to be sent = ', sendData)
               }
 
-              //Now send X_test to app.py to get the prediction along with the station number
-
               $.ajax({
                 type: "POST",
                 url: '/route',
@@ -431,7 +425,6 @@
 
                   if(textStatus == 'success'){
                     var response = jqXHR.responseJSON;
-                    // show the result
                     console.log('Response received:', response)
 
                     if(response.hasOwnProperty('prediction')){
@@ -482,7 +475,6 @@
                     var start_station = new google.maps.LatLng(start_station_lat, start_station_long)
                     var end_station = new google.maps.LatLng(end_station_lat, end_station_long)
                     var end = new google.maps.LatLng(end_lat, end_lng);
-                    //create the places service to confine the search to within xkm of the centre of dublin
 
                     //create the directions service which gets the route.
                     var directionsService = new google.maps.DirectionsService();
@@ -513,7 +505,7 @@
                     if (status === 'OK') {
                       console.log('Status for directions service is "OK": mapping route.')
 
-                      //read out the duration of the route
+                      // read out the duration of the route
                       var route = response.routes[0];
                       var duration = route.legs[0].duration.text;
 
@@ -604,6 +596,7 @@
       var percent=0;
       var station_r=0;
       $(document).on('click', '#custom-pred-search', function(){
+
         //call the generate predictions function
         X_test=generatePredictions();
         X_test=JSON.stringify(X_test);
@@ -626,6 +619,7 @@
         console.log(X_test, station_selected);
 
         //Now send X_test to app.py to get the prediction along with the station number
+
         $.ajax({
           type: "POST",
           url: "/predict",
@@ -643,14 +637,15 @@
             $("#custom-station-pred-stands").css('width', response.Stands + '%');
             $('#custom-station-pred-stands').html('<p class="percentage">' + response.Stands + '%</p>')
 
-            //find the number of total bike stands at this station
-            //find the ncorresponding number in column 1
+            // find the number of total bike stands at this station
+            // find the ncorresponding number in column 1
             // find the index of the row that has the given station number in column 0
             var rowIndex = total_bike_stands_array.findIndex(row => row[0] === station_r); 
             var total_bike_stands=total_bike_stands_array[rowIndex];
             var stands=total_bike_stands[1]
             console.log('Custom search - Stands',stands);
             var available_bikes_graph= stands*percent/100;
+
             //convert to nearest integer:
             available_bikes=Math.round(available_bikes_graph);
             console.log('Custom search - Bikes',available_bikes);
@@ -744,12 +739,14 @@
                 className: 'info-window'
               }
             });
+
             //open the info window when we hover over the marker
             marker.addListener('mouseover', (function(marker, infowindow){
               return function() {
                 infowindow.open(map, marker);
               }
             })(marker, infowindow));
+
             //close the infowindow when we move off the marker
             marker.addListener('mouseout', (function(marker, infowindow){ 
                 return function(){
@@ -759,10 +756,10 @@
 
             marker.addListener('click', (function(marker, infowindow){
               return function() {
-                // George - Extract station number from marker's info window
+                // Extract station number from marker's info window
                 var station_num = $('#station_num').val();
 
-                // George - Use AJAX to submit a POST request to server for associated server information
+                // Use AJAX to submit a POST request to server for associated server information
                 $.ajax({
                     type: "POST",
                     url: "/detailed",
@@ -825,38 +822,36 @@
                 }
             }); 
           }
-
-        
         }
 
-        document.getElementById('show-circles').addEventListener("click", function() {
-          for (var i = 0; i < circles.length; i++) {
-              circles[i].setVisible(true);
-              markers[i].setVisible(false);
+      document.getElementById('show-circles').addEventListener("click", function() {
+        for (var i = 0; i < circles.length; i++) {
+            circles[i].setVisible(true);
+            markers[i].setVisible(false);
+        }
+      }); 
+
+      var buttons = document.getElementsByClassName('btn');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('mouseover', function() {
+          this.style.opacity = '0.7';
+        });
+
+        buttons[i].addEventListener('mouseout', function() {
+          this.style.opacity = '1';
+        });
+
+        buttons[i].addEventListener('click', function(event) {
+          var clickedButton = event.target; 
+          
+          for (var j = 0; j < buttons.length; j++) {
+            buttons[j].classList.remove('active');
+            
           }
-        }); 
-
-        var buttons = document.getElementsByClassName('btn');
-        for (var i = 0; i < buttons.length; i++) {
-          buttons[i].addEventListener('mouseover', function() {
-            this.style.opacity = '0.7';
-          });
-
-          buttons[i].addEventListener('mouseout', function() {
-            this.style.opacity = '1';
-          });
-
-          buttons[i].addEventListener('click', function(event) {
-            var clickedButton = event.target; 
-            
-            for (var j = 0; j < buttons.length; j++) {
-              buttons[j].classList.remove('active');
-              
-            }
-            clickedButton.classList.add('active');
-            
-          });
-        }
+          clickedButton.classList.add('active');
+          
+        });
+      }
 
       $(document).ready(function() {
         var descriptionVisible = false;
@@ -874,6 +869,7 @@
             descriptionVisible = true;
           }
         });
+
         $(document).on('click', '#show-stations', function(){
           if (descriptionVisible) {
             $("#map-button-descriptions").animate({
@@ -882,6 +878,7 @@
             descriptionVisible = false;
           } 
         });
+
         $(document).on('click', '#show-bikes', function(){
           if (descriptionVisible) {
             $("#map-button-descriptions").animate({
@@ -892,7 +889,7 @@
         });
       });
 
-      // George - Open and close side display
+      // Open and close side display
       $(document).on('click', '#close-button', function(){
                 $("#detailed").removeClass('show'); // remove the 'show' class to hide the detailed div
       });
@@ -908,7 +905,7 @@
                 $("#route").removeClass('show'); // remove the 'show' class to hide the route div
       });
 
-      // George Current Weather Function
+      // Current Weather Function
       var current_weather = {{ current_weather | safe }};
 
       function convertTime(time){
@@ -939,7 +936,7 @@
         $('#current-weather').html(weather);
       }
         
-      // George Historical Chart Functions
+      // Historical Chart Functions
       function generateAvailabilityChart(data) {
         const ctx = document.getElementById('availabilityChart').getContext('2d');
         const labels = Object.keys(data);
@@ -1053,8 +1050,6 @@
           $('#occupancy_chart').show();
           $('#availability_chart').hide();
       }
-      
-      
   
       $(document).on('click', '#show-bikechart', function(){
           showAvailabilityChart();
@@ -1073,30 +1068,30 @@
   });
   currentWeather(current_weather);
 
-  //Cian user interaction with date and time dropdowns
+  //user interaction with date and time dropdowns
   //when the plan journey button is clicked display a menu with the following dropwdowns
   //station, date and time
   $(document).on('click', '#plan_journey_button', function(){
     $("#pred_content").toggleClass('show');
   });
 
-  //when the user selects enter for those values call the generatePredictions function
-  // next steps:
-  //create 3 dropdown menus for user to enter station, date and time
   // Get the current date
   var currentDate = new Date();
   var currentHour = currentDate.getHours();
+
   //the first day and last day is handled differently
   //current day starts at next 3 hour interval
   var remainder = currentHour % 3;
   var startHour = currentHour + (3 - remainder);
+
   // Loop through the next 5 days and generate options for each date
-  //is this range correct?
   for (var i = 1; i < 7; i++) {
     // Create a new date object for the current date + i days
     var date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
+
     // Format the date as YYYY-MM-DD
     var formattedDate = date.toISOString().slice(0, 10);
+
     // Create a new option element for the date and add it to the dropdown menu
     var option = document.createElement("option");
     option.text = formattedDate;
@@ -1110,10 +1105,13 @@
   function generateTimeOptions() {
     // Clear the existing options in the time dropdown
     timeDropdown.innerHTML = "";
+
     // Get the selected date from the date dropdown
     var selectedDate = new Date($("#dateDropdown").val());
+
     // Calculate the start hour and end hour for the selected date
     var startHour, endHour;
+
     if (selectedDate.getDate() == currentDate.getDate()) {
       // First day
       if (currentHour<5 &&currentHour>=0){
@@ -1135,6 +1133,7 @@
       startHour = 5;
       endHour = 23;
     }
+
     // Generate the time dropdown options based on the available hours
     for (var j = startHour; j <= endHour; j += 1) {
       var option = document.createElement("option");
@@ -1156,8 +1155,10 @@
 
   //finally the station dropdown menu
   var stationDropdown = document.getElementById("stationDropdown");
+
     //get the station names from the station data
     var station_data= {{ live_station_data | safe }};
+
     //sort the station data alphabetically based on station name
     //this is more user readable
     station_data.sort(function(a, b) {
@@ -1185,7 +1186,7 @@
       stationDropdown.add(option);
     } 
   
-  //Cian generate predictions function
+  // generate predictions function
   function generatePredictions(){
     // drop down of next 5 days
     var user_pred_date = dateDropdown.value;
@@ -1222,24 +1223,31 @@
           //extract temperature, wind speed and rain
           var f_temp = forecast_weather.list[i].main.temp;
           var f_wind_speed = forecast_weather.list[i].wind.speed
+
           // check is rain is present, if it is then extract rain val,
           //if not then set to 0 instead of null
           var f_rain = forecast_weather.list[i].rain ? forecast_weather.list[i].rain["3h"] : 0;
+
           //console.log(f_temp, f_wind_speed, f_rain)
           return [f_temp, f_wind_speed, f_rain];
         }
       }
       return null; //if no data obtained
     }
+
     var [pred_temp, pred_wind_speed, pred_rain] = forecastWeather(forecast_weather);
+
     //console.log(pred_temp, pred_wind_speed, pred_rain)
     //convert the hour to integer format
     var user_pred_time_int = parseInt(user_pred_time)
+
     //extract the future day of the week from the date
     const date = new Date(user_pred_date);
     const day = date.getDay(); // returns a number between 0 (Sunday) and 6 (Saturday)
+
     //insert a 1 in the column corresponding to the day of the week
     var user_pred_day_col=day+4
+    
     //set all days to zero initially
     var X_test= [[pred_temp,pred_wind_speed,pred_rain,user_pred_time_int,0,0,0,0,0,0,0]]
     X_test.forEach((column) => {
