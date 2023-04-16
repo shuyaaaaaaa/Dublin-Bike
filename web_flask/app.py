@@ -189,8 +189,8 @@ def detailed():
                             </div>
                             <div class ="charts">
                             <div class ="chart-buttons">
-                            <button class="chart-btn active" id="show-bikechart"><i class="fa-solid fa-bicycle"></i> Average Bikes</button>
-                            <button class="chart-btn" id="show-stationchart"><i class="fa-solid fa-square-parking"></i> Average Spaces</button>
+                            <button class="chart-btn active br-left" id="show-bikechart"><i class="fa-solid fa-bicycle"></i> Average Bikes</button>
+                            <button class="chart-btn br-right" id="show-stationchart"><i class="fa-solid fa-square-parking"></i> Average Spaces</button>
                             </div>
                             <div id='availability_chart'>
                                 <canvas id="availabilityChart"></canvas>

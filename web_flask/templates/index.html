@@ -69,6 +69,7 @@
         <label for="end">End:</label>
         <input type="text" id ='end' name="end">
         <br>
+        <div id="route-error"></div>
         <div class="flex-row">
           <label for="plan_journey_button">Plan future route:</label>
           <input type="checkbox" id="plan_journey_button" class="check_box" name="plan_journey_button">
@@ -310,7 +311,9 @@
         var marker_start = null;
         var marker_end = null;
         var marker_waypoints = [];
-        var directionsDisplay = null
+        var directionsDisplay = null;
+        var startValue = null;
+        var endValue = null;
 
         // Route Function-Cian
         // Use AJAX to catch route form submission and then update the map with the response.
@@ -319,8 +322,17 @@
 
             event.preventDefault();
 
+            startValue = $('#start').val();
+            endValue = $('#end').val();
+
+            if(!startValue || !endValue){
+              console.log('Start or end point error.')
+              $('#route-error').addClass('route-error-show');
+              $('#route-error').html('Please input a valid start and end point');
+              return
+              }
+
             if(routeSubmitted){
-              xhr.abort()
               // Reset the form values
               $('#start').val('');
               $('#end').val('');
@@ -330,6 +342,10 @@
               $('#stationDropdown').val('');
               $('.display-custom-pred').removeClass('show');
               $('.custom-pred-container').removeClass('show');
+
+              if ($('#route-error').hasClass('route-error-show')){
+                $('#route-error').removeClass('route-error-show');
+              }
 
               // Hide the prediction container
               $('.pred-container').removeClass('show');
@@ -364,6 +380,10 @@
 
               }else{
 
+              if ($('#route-error').hasClass('route-error-show')){
+                $('#route-error').removeClass('route-error-show');
+              }
+
               var route_submit_button = $('#route-submit-button')
               route_submit_button.val('Reset Route')
               route_submit_button.css('background-color', 'red')
@@ -373,8 +393,8 @@
 
               var formData = {
                 //adding ', Dublin' to the end of the input address to ensure that the geocoder returns the correct location
-                start: $('#start').val()+', Dublin',
-                end: $('#end').val()+', Dublin'
+                start: startValue +', Dublin',
+                end: endValue +', Dublin'
               }
               
               // Prediction Section ----------------------------------------------------------------
@@ -403,7 +423,7 @@
 
               //Now send X_test to app.py to get the prediction along with the station number
 
-              xhr = $.ajax({
+              $.ajax({
                 type: "POST",
                 url: '/route',
                 data: sendData,
@@ -562,10 +582,6 @@
                       console.log('Directions request failed due to ' + status);
                     }
                     });
-
-                  }else if (textStatus == 'abort'){
-                    console.log('Request aborted.')
-                    return
                   }
                 }
               })
