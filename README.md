@@ -37,4 +37,4 @@ Using the random-forest machine learning algorithm, the app provides predictions
 
 ### Support:
 
-If you encounter any issues or have feedback, please contact [your support email].
+If you encounter any issues or have feedback, please contact [shuyaikeo@gmail.com].
